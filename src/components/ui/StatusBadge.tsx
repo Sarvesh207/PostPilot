@@ -1,7 +1,6 @@
 import { CircleAlert, CircleCheck, Clock } from 'lucide-react';
 import { cn } from '../../lib/cn';
-
-export type PostStatus = 'scheduled' | 'published' | 'failed';
+import type { PostStatus } from '../../lib/types';
 
 const STATUS = {
   scheduled: {
