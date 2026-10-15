@@ -1,8 +1,9 @@
-// App state without a library: a plain object, an action set that replaces it
-// immutably, and React's useSyncExternalStore to subscribe components.
+// App state without a library: a plain object, actions that replace it
+// immutably, and React's useSyncExternalStore (via createStore) to subscribe.
 
-import { useEffect, useMemo, useState, useSyncExternalStore } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { ApiError, createMockApi, scenarioFromUrl, type Api } from './api';
+import { createStore } from './createStore';
 import type { Platform } from './platforms';
 import {
   activeFilterCount,
@@ -11,6 +12,7 @@ import {
   filterPosts,
   groupByDay,
   hasActiveFilters,
+  lastPublished,
   nextScheduled,
   weekSummary,
 } from './selectors';
@@ -34,27 +36,14 @@ export type RetryOutcome = { ok: true; post: Post; rescheduled: boolean } | { ok
 const errorMessage = (e: unknown, fallback: string) => (e instanceof ApiError ? e.message : fallback);
 
 export function createAppStore(api: Api) {
-  let state: AppState = {
+  const { getState, setState, subscribe, useStore } = createStore<AppState>({
     posts: [],
     accounts: null,
     load: 'idle',
     filters: EMPTY_FILTERS,
     retrying: {},
     reconnecting: {},
-  };
-  const listeners = new Set<() => void>();
-
-  const getState = () => state;
-  const setState = (patch: Partial<AppState> | ((s: AppState) => Partial<AppState>)) => {
-    state = { ...state, ...(typeof patch === 'function' ? patch(state) : patch) };
-    listeners.forEach((l) => l());
-  };
-  const subscribe = (l: () => void) => {
-    listeners.add(l);
-    return () => {
-      listeners.delete(l);
-    };
-  };
+  });
 
   const replacePost = (post: Post) =>
     setState((s) => ({ posts: s.posts.map((p) => (p.id === post.id ? post : p)) }));
@@ -70,12 +59,12 @@ export function createAppStore(api: Api) {
   const actions = {
     async load() {
       setState({ load: 'loading' });
-      try {
-        const [posts, accounts] = await Promise.all([api.listPosts(), api.getAccounts()]);
-        setState({ posts, accounts, load: 'ready' });
-      } catch {
-        setState({ load: 'error' });
-      }
+      // Independent requests: accounts still show in the sidebar if posts fail.
+      const [posts, accounts] = await Promise.allSettled([api.listPosts(), api.getAccounts()]);
+      setState({
+        ...(accounts.status === 'fulfilled' && { accounts: accounts.value }),
+        ...(posts.status === 'fulfilled' ? { posts: posts.value, load: 'ready' as const } : { load: 'error' as const }),
+      });
     },
 
     /** Throws ApiError with a user-facing message if the server rejects the draft. */
@@ -93,7 +82,7 @@ export function createAppStore(api: Api) {
 
     /** Optimistic: the card disappears at once and comes back if the server refuses. */
     async deletePost(id: string): Promise<void> {
-      const before = state.posts;
+      const before = getState().posts;
       setState((s) => ({ posts: s.posts.filter((p) => p.id !== id) }));
       try {
         await api.deletePost(id);
@@ -105,7 +94,7 @@ export function createAppStore(api: Api) {
 
     /** Never throws: the outcome drives the success / failure toast. */
     async retryPost(id: string): Promise<RetryOutcome> {
-      if (state.retrying[id]) return { ok: false, message: 'Already retrying' };
+      if (getState().retrying[id]) return { ok: false, message: 'Already retrying' };
       setState((s) => ({ retrying: { ...s.retrying, [id]: true } }));
       try {
         const { post, rescheduled } = await api.retryPost(id);
@@ -149,7 +138,7 @@ export function createAppStore(api: Api) {
     clearFilters: () => setState({ filters: EMPTY_FILTERS }),
   };
 
-  return { getState, subscribe, actions };
+  return { getState, subscribe, useStore, actions };
 }
 
 export type AppStore = ReturnType<typeof createAppStore>;
@@ -157,18 +146,8 @@ export type AppStore = ReturnType<typeof createAppStore>;
 export const appStore = createAppStore(createMockApi({ scenario: scenarioFromUrl() }));
 export const actions = appStore.actions;
 
-/**
- * Subscribe to a slice of state. The selector must return something already in
- * state (or a primitive) — derive new arrays/objects with useMemo instead, or
- * useSyncExternalStore will loop.
- */
-export function useAppState<T>(selector: (s: AppState) => T): T {
-  return useSyncExternalStore(
-    appStore.subscribe,
-    () => selector(appStore.getState()),
-    () => selector(appStore.getState()),
-  );
-}
+/** Subscribe to a slice of app state (see createStore for the selector rule). */
+export const useAppState = appStore.useStore;
 
 /** Current time, refreshed on an interval so "Today" rolls over at midnight. */
 export function useNow(intervalMs = 60_000): Date {
@@ -188,12 +167,18 @@ export function useQueueView() {
 
   return useMemo(() => {
     const visible = filterPosts(posts, filters);
+    const groups = groupByDay(visible, now);
+    const week = weekSummary(posts, now);
     return {
-      groups: groupByDay(visible, now),
+      groups,
+      groupKeys: new Set(groups.map((g) => g.key)),
       visibleCount: visible.length,
       counts: countByStatus(posts),
-      week: weekSummary(posts, now),
+      failed: posts.filter((p) => p.status === 'failed'),
+      week,
+      weekCount: week.reduce((n, d) => n + d.count, 0),
       next: nextScheduled(posts, now),
+      lastPublished: lastPublished(posts),
       filterCount: activeFilterCount(filters),
       filtersActive: hasActiveFilters(filters),
       now,

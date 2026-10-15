@@ -64,25 +64,30 @@ export function PlatformGlyph({
   );
 }
 
-/** Overlapping glyphs for a post's platforms, with an accessible summary. */
+/** A post's platform glyphs, with an accessible summary. */
 export function PlatformStack({
   platforms,
   size = 'sm',
+  round = false,
+  overlap = true,
   className,
 }: {
   platforms: Platform[];
   size?: GlyphSize;
+  round?: boolean;
+  /** Overlapping stack (desktop) or spaced row (mobile). */
+  overlap?: boolean;
   className?: string;
 }) {
   const names = platforms.map((p) => PLATFORM_BY_ID[p].name).join(', ');
   return (
-    <span role="img" aria-label={`Platforms: ${names}`} className={cn('inline-flex', className)}>
+    <span role="img" aria-label={`Platforms: ${names}`} className={cn('inline-flex', !overlap && 'gap-1', className)}>
       {platforms.map((p, i) => (
         <PlatformGlyph
           key={p}
           platform={p}
           size={size}
-          className={cn('outline-2 outline-surface', i > 0 && '-ml-1')}
+          className={cn(round && 'rounded-full', overlap && 'outline-2 outline-surface', overlap && i > 0 && '-ml-1')}
         />
       ))}
     </span>

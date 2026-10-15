@@ -7,6 +7,7 @@ import {
   filterPosts,
   groupByDay,
   hasActiveFilters,
+  lastPublished,
   nextScheduled,
   weekSummary,
 } from './selectors';
@@ -96,6 +97,13 @@ describe('filter state helpers', () => {
 describe('nextScheduled', () => {
   it('finds the soonest upcoming scheduled post', () => {
     expect(nextScheduled(posts, NOW)?.content).toMatch(/^Festive gift hampers/);
+  });
+});
+
+describe('lastPublished', () => {
+  it('finds the latest published post, or nothing', () => {
+    expect(lastPublished(posts)?.content).toMatch(/^Diwali Mega Sale is LIVE/);
+    expect(lastPublished(posts.filter((p) => p.status !== 'published'))).toBeUndefined();
   });
 });
 

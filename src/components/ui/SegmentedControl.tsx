@@ -7,6 +7,9 @@ export interface SegmentOption<T extends string> {
   icon?: ReactNode;
   /** Hide the text label (it stays available to screen readers). */
   iconOnly?: boolean;
+  disabled?: boolean;
+  /** Tooltip, e.g. "Coming soon" for a disabled option. */
+  hint?: string;
 }
 
 interface SegmentedControlProps<T extends string> {
@@ -34,11 +37,13 @@ export function SegmentedControl<T extends string>({
   const refs = useRef<(HTMLButtonElement | null)[]>([]);
 
   const onKeyDown = (e: KeyboardEvent, index: number) => {
+    const enabled = options.flatMap((o, i) => (o.disabled ? [] : [i]));
+    const pos = enabled.indexOf(index);
     const delta = KEY_DELTA[e.key];
     let next: number | undefined;
-    if (delta) next = (index + delta + options.length) % options.length;
-    else if (e.key === 'Home') next = 0;
-    else if (e.key === 'End') next = options.length - 1;
+    if (delta) next = enabled[(pos + delta + enabled.length) % enabled.length];
+    else if (e.key === 'Home') next = enabled[0];
+    else if (e.key === 'End') next = enabled[enabled.length - 1];
     if (next === undefined) return;
     e.preventDefault();
     onChange(options[next].value);
@@ -67,7 +72,8 @@ export function SegmentedControl<T extends string>({
             role="radio"
             aria-checked={checked}
             aria-label={opt.iconOnly ? opt.label : undefined}
-            title={opt.iconOnly ? opt.label : undefined}
+            title={opt.hint ?? (opt.iconOnly ? opt.label : undefined)}
+            disabled={opt.disabled}
             tabIndex={checked ? 0 : -1}
             onClick={() => onChange(opt.value)}
             onKeyDown={(e) => onKeyDown(e, i)}
@@ -76,9 +82,11 @@ export function SegmentedControl<T extends string>({
               size === 'md' ? 'h-11 px-3.5 text-[15px] sm:h-8 sm:text-[13px]' : 'h-8 px-2.5 text-[13px]',
               opt.iconOnly && 'px-2',
               fullWidth && 'flex-1',
-              checked
-                ? 'bg-surface text-text shadow-[0_1px_2px_rgb(15_23_42/0.08)] dark:bg-surface-raised'
-                : 'text-text-muted hover:text-text',
+              opt.disabled
+                ? 'cursor-not-allowed text-disabled-text'
+                : checked
+                  ? 'bg-surface text-text shadow-[0_1px_2px_rgb(15_23_42/0.08)] dark:bg-surface-raised'
+                  : 'text-text-muted hover:text-text',
             )}
           >
             {opt.icon}

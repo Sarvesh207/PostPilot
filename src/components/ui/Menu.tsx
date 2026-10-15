@@ -23,12 +23,22 @@ export const menuItemClass = (destructive?: boolean, highlighted?: boolean) =>
   );
 
 /** "⋯" overflow menu (Edit / Delete on post cards). */
-export function OverflowMenu({ actions, label = 'More actions' }: { actions: MenuAction[]; label?: string }) {
+export function OverflowMenu({
+  actions,
+  label = 'More actions',
+  triggerId,
+}: {
+  actions: MenuAction[];
+  label?: string;
+  /** Lets a dialog opened from the menu return focus to this trigger. */
+  triggerId?: string;
+}) {
   const container = usePortalContainer();
   return (
     <DropdownMenu.Root modal={false}>
       <DropdownMenu.Trigger asChild>
         <button
+          id={triggerId}
           type="button"
           aria-label={label}
           className="focus-ring grid size-11 shrink-0 place-items-center rounded-md text-text-muted hover:bg-surface-hover hover:text-text data-[state=open]:bg-surface-hover sm:size-8"

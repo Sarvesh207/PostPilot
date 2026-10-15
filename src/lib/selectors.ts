@@ -67,6 +67,11 @@ export function nextScheduled(posts: Post[], now: Date = new Date()): Post | und
   return posts.filter((p) => p.status === 'scheduled' && p.scheduledAt > t).sort(byTime)[0];
 }
 
+/** The most recently published post. */
+export function lastPublished(posts: Post[]): Post | undefined {
+  return posts.filter((p) => p.status === 'published').sort(byTime).at(-1);
+}
+
 export interface WeekDay {
   key: string;
   count: number;

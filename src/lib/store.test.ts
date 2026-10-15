@@ -24,6 +24,8 @@ describe('createAppStore', () => {
     const store = setup({ listPosts: () => Promise.reject(new ApiError("Couldn't load posts", 'load_failed')) });
     await store.actions.load();
     expect(store.getState().load).toBe('error');
+    // Accounts load independently, so the sidebar isn't stuck on skeletons.
+    expect(store.getState().accounts?.facebook).toBe('connected');
   });
 
   it('flags a post as retrying while the request is in flight', async () => {
