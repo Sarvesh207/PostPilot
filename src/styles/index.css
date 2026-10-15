@@ -1,0 +1,238 @@
+@import 'tailwindcss';
+
+/* Dark styles apply under any [data-theme="dark"] ancestor, so the dev
+   component sheet can render both themes side by side on one page. */
+@custom-variant dark (&:where([data-theme='dark'], [data-theme='dark'] *));
+
+/* ---------------------------------------------------------------------------
+   Semantic tokens. Components use only these — never raw hex or the default
+   Tailwind palette (which is disabled below).
+   ------------------------------------------------------------------------ */
+:root,
+[data-theme='light'] {
+  color-scheme: light;
+
+  --bg: #f6f7f9;
+  --surface: #ffffff;
+  --surface-raised: #ffffff;
+  --surface-sunken: #eef0f3;
+  --surface-hover: #f3f4f7;
+
+  --border: #cbd2dc;
+  --border-subtle: #e3e6eb;
+
+  --text: #0f172a;
+  --text-muted: #5b6b80;
+  --text-subtle: #8792a2;
+
+  --accent: #4f46e5;
+  --accent-hover: #4338ca;
+  --accent-soft: #eef0ff;
+  --accent-text: #4f46e5;
+  --accent-border: #4f46e5;
+  --on-accent: #ffffff;
+  --focus: #4f46e5;
+
+  --danger: #b91c1c;
+  --danger-hover: #991b1b;
+
+  --scheduled: #1d4ed8;
+  --scheduled-soft: #eff5ff;
+  --scheduled-border: #c7dafe;
+  --published: #15803d;
+  --published-soft: #ecfdf3;
+  --published-border: #bbf0cf;
+  --failed: #b91c1c;
+  --failed-soft: #fef2f2;
+  --failed-border: #fbcfcf;
+  --warning: #b45309;
+  --warning-soft: #fff7eb;
+
+  --disabled: #e8ebef;
+  --disabled-text: #98a2b3;
+
+  --toast: #0f172a;
+  --toast-text: #f8fafc;
+  --toast-border: #0f172a;
+  --toast-success: #4ade80;
+
+  --overlay: rgb(15 23 42 / 0.45);
+  --glyph-ring: transparent;
+  --skeleton: #e8ebef;
+
+  --thumb-peach: #fdebd0;
+  --thumb-peach-icon: #b45309;
+  --thumb-sand: #ece3d8;
+  --thumb-sand-icon: #7c5e3c;
+  --thumb-rose: #fbe4ec;
+  --thumb-rose-icon: #be185d;
+
+  --shadow-pop: 0 8px 24px rgb(15 23 42 / 0.08), 0 1px 2px rgb(15 23 42 / 0.06);
+}
+
+[data-theme='dark'] {
+  color-scheme: dark;
+
+  --bg: #0b0f17;
+  --surface: #121826;
+  --surface-raised: #1a2130;
+  --surface-sunken: #0e131d;
+  --surface-hover: #1a2130;
+
+  --border: #2a3342;
+  --border-subtle: #1f2733;
+
+  --text: #e6eaf0;
+  --text-muted: #94a3b8;
+  --text-subtle: #64748b;
+
+  --accent: #4f46e5;
+  --accent-hover: #5b54f0;
+  --accent-soft: rgb(99 102 241 / 0.16);
+  --accent-text: #818cf8;
+  --accent-border: #6366f1;
+  --on-accent: #ffffff;
+  --focus: #818cf8;
+
+  --danger: #b91c1c;
+  --danger-hover: #c62828;
+
+  --scheduled: #60a5fa;
+  --scheduled-soft: rgb(59 130 246 / 0.14);
+  --scheduled-border: rgb(96 165 250 / 0.35);
+  --published: #4ade80;
+  --published-soft: rgb(34 197 94 / 0.12);
+  --published-border: rgb(74 222 128 / 0.3);
+  --failed: #f87171;
+  --failed-soft: rgb(239 68 68 / 0.12);
+  --failed-border: rgb(248 113 113 / 0.35);
+  --warning: #fbbf24;
+  --warning-soft: rgb(245 158 11 / 0.12);
+
+  --disabled: #1f2733;
+  --disabled-text: #5b6779;
+
+  --toast: #1a2130;
+  --toast-text: #e6eaf0;
+  --toast-border: #2a3342;
+  --toast-success: #4ade80;
+
+  --overlay: rgb(0 0 0 / 0.6);
+  --glyph-ring: rgb(255 255 255 / 0.18);
+  --skeleton: #1f2733;
+
+  --thumb-peach: rgb(251 191 36 / 0.12);
+  --thumb-peach-icon: #fbbf24;
+  --thumb-sand: rgb(214 186 150 / 0.12);
+  --thumb-sand-icon: #d6ba96;
+  --thumb-rose: rgb(244 114 182 / 0.12);
+  --thumb-rose-icon: #f472b6;
+
+  --shadow-pop: 0 8px 24px rgb(0 0 0 / 0.4);
+}
+
+@theme inline {
+  --color-*: initial;
+  --color-transparent: transparent;
+  --color-current: currentColor;
+
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-raised: var(--surface-raised);
+  --color-surface-sunken: var(--surface-sunken);
+  --color-surface-hover: var(--surface-hover);
+  --color-border: var(--border);
+  --color-border-subtle: var(--border-subtle);
+  --color-text: var(--text);
+  --color-text-muted: var(--text-muted);
+  --color-text-subtle: var(--text-subtle);
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-soft: var(--accent-soft);
+  --color-accent-text: var(--accent-text);
+  --color-accent-border: var(--accent-border);
+  --color-on-accent: var(--on-accent);
+  --color-focus: var(--focus);
+  --color-danger: var(--danger);
+  --color-danger-hover: var(--danger-hover);
+  --color-scheduled: var(--scheduled);
+  --color-scheduled-soft: var(--scheduled-soft);
+  --color-scheduled-border: var(--scheduled-border);
+  --color-published: var(--published);
+  --color-published-soft: var(--published-soft);
+  --color-published-border: var(--published-border);
+  --color-failed: var(--failed);
+  --color-failed-soft: var(--failed-soft);
+  --color-failed-border: var(--failed-border);
+  --color-warning: var(--warning);
+  --color-warning-soft: var(--warning-soft);
+  --color-disabled: var(--disabled);
+  --color-disabled-text: var(--disabled-text);
+  --color-toast: var(--toast);
+  --color-toast-text: var(--toast-text);
+  --color-toast-border: var(--toast-border);
+  --color-toast-success: var(--toast-success);
+  --color-overlay: var(--overlay);
+  --color-glyph-ring: var(--glyph-ring);
+  --color-skeleton: var(--skeleton);
+  --color-thumb-peach: var(--thumb-peach);
+  --color-thumb-peach-icon: var(--thumb-peach-icon);
+  --color-thumb-sand: var(--thumb-sand);
+  --color-thumb-sand-icon: var(--thumb-sand-icon);
+  --color-thumb-rose: var(--thumb-rose);
+  --color-thumb-rose-icon: var(--thumb-rose-icon);
+
+  /* Fixed brand colours for the platform glyph tiles. */
+  --color-facebook: #1877f2;
+  --color-x: #0f172a;
+  --color-tiktok: #0f172a;
+  --color-white: #ffffff;
+
+  --shadow-pop: var(--shadow-pop);
+
+  --font-sans: 'Geist Variable', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+}
+
+@utility focus-ring {
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+  &:focus-visible {
+    outline-color: var(--focus);
+  }
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-sans);
+    font-size: 14px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  /* Native date/time picker icons follow the theme via color-scheme;
+     make them a little quieter. */
+  input::-webkit-calendar-picker-indicator {
+    opacity: 0.6;
+    cursor: pointer;
+  }
+  ::placeholder {
+    color: var(--text-muted);
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 1.5s !important;
+  }
+}
