@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { ComposerHost } from '../features/composer/Composer';
 import { DesktopQueue, MobileQueue } from '../features/queue/QueuePage';
 import { DeletePostDialog } from '../features/queue/postActions';
@@ -19,11 +19,29 @@ export function App() {
     if (appStore.getState().load === 'idle') void actions.load();
   }, []);
 
+  // Client-side navigation: retitle the tab and move focus to the new page so
+  // screen readers announce it (initial load keeps the browser's own focus).
+  // (Compares with the previous route rather than a first-run flag, which
+  // StrictMode's double effect would clear.)
+  const prevRoute = useRef(route);
+  useEffect(() => {
+    document.title = route === 'settings' ? 'Settings · PostPilot' : 'Queue · PostPilot';
+    if (prevRoute.current === route) return;
+    prevRoute.current = route;
+    document.getElementById('main-content')?.focus({ preventScroll: true });
+  }, [route]);
+
   const page =
     route === 'settings' ? <SettingsPage desktop={desktop} /> : desktop ? <DesktopQueue /> : <MobileQueue />;
 
   return (
     <>
+      <a
+        href="#main-content"
+        className="focus-ring sr-only z-[60] rounded-lg border border-border bg-surface-raised text-sm font-medium text-text shadow-pop focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:px-4 focus:py-2.5"
+      >
+        Skip to content
+      </a>
       {desktop ? (
         <DesktopShell route={route} queueCount={postCount}>
           {page}
@@ -35,7 +53,7 @@ export function App() {
       )}
       <ComposerHost desktop={desktop} />
       <DeletePostDialog />
-      <ToastHost desktop={desktop} />
+      <ToastHost desktop={desktop} liftAboveFab={route === 'queue'} />
     </>
   );
 }

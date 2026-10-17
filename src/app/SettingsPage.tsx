@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import { ThemeSwitcher } from '../components/ThemeSwitcher';
 import { Button } from '../components/ui/Button';
+import { cn } from '../lib/cn';
 import { actions } from '../lib/store';
 import { toast } from '../lib/toast';
 import { AccountsList } from './AccountsList';
@@ -32,7 +33,14 @@ export function SettingsPage({ desktop }: { desktop: boolean }) {
         {!desktop && <Logo />}
         <h1 className="text-xl font-semibold">Settings</h1>
       </header>
-      <main className={desktop ? 'mx-auto flex max-w-2xl flex-col gap-4 px-8 py-8' : 'mx-auto flex max-w-2xl flex-col gap-4 px-4 py-4'}>
+      <main
+        id="main-content"
+        tabIndex={-1}
+        className={cn(
+          'mx-auto flex max-w-2xl flex-col gap-4 outline-none',
+          desktop ? 'px-8 py-8' : 'px-4 py-4',
+        )}
+      >
         <Card title="Accounts" description="Posts publish through these connections. Reconnect an account when its access expires.">
           <AccountsList size="comfortable" />
         </Card>

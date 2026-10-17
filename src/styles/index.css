@@ -244,6 +244,9 @@
 @keyframes pp-toast-in {
   from { opacity: 0; transform: translateY(8px); }
 }
+@keyframes pp-toast-out {
+  to { opacity: 0; transform: translateY(4px) scale(0.98); }
+}
 
 @utility animate-fade-in {
   animation: pp-fade-in 150ms ease-out;
@@ -259,6 +262,10 @@
 }
 @utility animate-toast-in {
   animation: pp-toast-in 180ms ease-out;
+}
+/* Keep in step with TOAST_EXIT_MS in lib/toast.ts. */
+@utility animate-toast-out {
+  animation: pp-toast-out 160ms ease-in forwards;
 }
 
 /* Horizontal chip rows that scroll without a visible scrollbar. */

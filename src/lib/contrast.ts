@@ -1,4 +1,5 @@
-// WCAG 2.x contrast helpers, used by the dev component sheet to verify tokens.
+// WCAG 2.x contrast helpers. The dev component sheet shows these pairs live and
+// contrast.test.ts enforces them for both themes straight from index.css.
 
 type RGBA = [number, number, number, number];
 
@@ -36,3 +37,29 @@ export function contrastRatio(a: RGBA, b: RGBA): number {
   const [hi, lo] = [luminance(a), luminance(b)].sort((x, y) => y - x);
   return (hi + 0.05) / (lo + 0.05);
 }
+
+/** [label, foreground, background, minimum ratio]. Colours are tokens or literals. */
+export const CONTRAST_PAIRS: [string, string, string, number][] = [
+  ['Text on surface', '--text', '--surface', 4.5],
+  ['Text on page', '--text', '--bg', 4.5],
+  ['Text on raised surface', '--text', '--surface-raised', 4.5],
+  ['Muted text on surface', '--text-muted', '--surface', 4.5],
+  ['Muted text on page', '--text-muted', '--bg', 4.5],
+  ['Muted text on sunken', '--text-muted', '--surface-sunken', 4.5],
+  ['Accent text on surface', '--accent-text', '--surface', 4.5],
+  ['Accent text on page', '--accent-text', '--bg', 4.5],
+  ['Selected chip text', '--accent-text', '--accent-soft', 4.5],
+  ['Primary button label', '--on-accent', '--accent', 4.5],
+  ['Primary button hover label', '--on-accent', '--accent-hover', 4.5],
+  ['Destructive button label', '#ffffff', '--danger', 4.5],
+  ['Scheduled badge', '--scheduled', '--scheduled-soft', 4.5],
+  ['Published badge', '--published', '--published-soft', 4.5],
+  ['Failed badge / error row', '--failed', '--failed-soft', 4.5],
+  ['Failed text on surface', '--failed', '--surface', 4.5],
+  ['Warning counter', '--warning', '--surface', 4.5],
+  ['Toast text', '--toast-text', '--toast', 4.5],
+  ['Error toast text', '#ffffff', '--danger', 4.5],
+  ['Toast success icon', '--toast-success', '--toast', 3],
+  ['Focus ring vs surface', '--focus', '--surface', 3],
+  ['Focus ring vs page', '--focus', '--bg', 3],
+];

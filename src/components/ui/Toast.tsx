@@ -4,7 +4,10 @@ import { cn } from '../../lib/cn';
 
 export type ToastVariant = 'success' | 'error';
 
-/** Visual toast. The queueing/stacking system arrives in Phase 5. */
+/**
+ * Visual toast only. Announcements come from ToastHost's live regions, so this
+ * carries no role of its own (screen readers would otherwise read it twice).
+ */
 export function ToastView({
   variant = 'success',
   children,
@@ -19,7 +22,6 @@ export function ToastView({
   const Icon = variant === 'success' ? CircleCheck : CircleAlert;
   return (
     <div
-      role={variant === 'error' ? 'alert' : 'status'}
       className={cn(
         'flex min-h-12 w-full max-w-sm items-center gap-3 rounded-[10px] border py-2 pl-4 pr-2 text-sm font-medium shadow-pop',
         variant === 'success'

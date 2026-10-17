@@ -16,7 +16,7 @@ import { Skeleton } from '../components/ui/Skeleton';
 import { StatusBadge } from '../components/ui/StatusBadge';
 import { ToastView } from '../components/ui/Toast';
 import { cn } from '../lib/cn';
-import { contrastRatio, flatten, parseColor } from '../lib/contrast';
+import { CONTRAST_PAIRS as PAIRS, contrastRatio, flatten, parseColor } from '../lib/contrast';
 import { countChars } from '../lib/counter';
 import { PLATFORMS, type Platform } from '../lib/platforms';
 import { PortalContainerContext } from '../lib/portal';
@@ -237,23 +237,6 @@ function Swatch({ name, token, theme }: { name: string; token: string; theme: Th
 }
 
 // [label, foreground token, background token, minimum ratio]
-const PAIRS: [string, string, string, number][] = [
-  ['Text on surface', '--text', '--surface', 4.5],
-  ['Text on page', '--text', '--bg', 4.5],
-  ['Muted text on surface', '--text-muted', '--surface', 4.5],
-  ['Muted text on page', '--text-muted', '--bg', 4.5],
-  ['Accent text on surface', '--accent-text', '--surface', 4.5],
-  ['Selected chip text', '--accent-text', '--accent-soft', 4.5],
-  ['Primary button label', '--on-accent', '--accent', 4.5],
-  ['Destructive button label', '#ffffff', '--danger', 4.5],
-  ['Scheduled badge', '--scheduled', '--scheduled-soft', 4.5],
-  ['Published badge', '--published', '--published-soft', 4.5],
-  ['Failed badge / error row', '--failed', '--failed-soft', 4.5],
-  ['Failed text on surface', '--failed', '--surface', 4.5],
-  ['Warning counter', '--warning', '--surface', 4.5],
-  ['Toast text', '--toast-text', '--toast', 4.5],
-  ['Focus ring vs surface', '--focus', '--surface', 3],
-];
 
 function ContrastTable({ theme }: { theme: Theme }) {
   const ref = useRef<HTMLDivElement>(null);

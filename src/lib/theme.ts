@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useSyncExternalStore } from 'react';
+import { useCallback, useSyncExternalStore } from 'react';
 
 export type ThemePref = 'light' | 'dark' | 'system';
 export type Theme = 'light' | 'dark';
@@ -28,7 +28,26 @@ function apply(theme: Theme) {
 }
 
 const listeners = new Set<() => void>();
-let currentPref: ThemePref = typeof window === 'undefined' ? 'system' : readPref();
+// One object per change so useSyncExternalStore sees OS-driven flips too.
+let current: { pref: ThemePref; theme: Theme } =
+  typeof window === 'undefined' ? { pref: 'system', theme: 'light' } : { pref: readPref(), theme: resolve(readPref()) };
+
+function setCurrent(pref: ThemePref) {
+  current = { pref, theme: resolve(pref) };
+  apply(current.theme);
+  listeners.forEach((l) => l());
+}
+
+// Module-level, not per component: the switcher isn't mounted on every screen,
+// but the theme must still follow the OS (and other tabs) everywhere.
+if (typeof window !== 'undefined') {
+  media().addEventListener('change', () => {
+    if (current.pref === 'system') setCurrent('system');
+  });
+  window.addEventListener('storage', (e) => {
+    if (e.key === STORAGE_KEY) setCurrent(readPref());
+  });
+}
 
 function subscribe(cb: () => void) {
   listeners.add(cb);
@@ -36,27 +55,16 @@ function subscribe(cb: () => void) {
 }
 
 export function useTheme() {
-  const pref = useSyncExternalStore(subscribe, () => currentPref);
+  const { pref, theme } = useSyncExternalStore(subscribe, () => current);
 
   const setPref = useCallback((next: ThemePref) => {
-    currentPref = next;
     try {
       localStorage.setItem(STORAGE_KEY, next);
     } catch {
       // Non-fatal: the choice just won't persist.
     }
-    apply(resolve(next));
-    listeners.forEach((l) => l());
+    setCurrent(next);
   }, []);
 
-  // While following the system, react to OS theme changes live.
-  useEffect(() => {
-    if (pref !== 'system') return;
-    const mq = media();
-    const onChange = () => apply(resolve('system'));
-    mq.addEventListener('change', onChange);
-    return () => mq.removeEventListener('change', onChange);
-  }, [pref]);
-
-  return { pref, theme: resolve(pref), setPref };
+  return { pref, theme, setPref };
 }

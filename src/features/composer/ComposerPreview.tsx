@@ -36,7 +36,7 @@ export function ComposerPreview({
           </span>
           <div className="min-w-0 leading-tight">
             <p className="truncate text-[15px] font-semibold">[Your brand]</p>
-            <p className={cn('mt-0.5 truncate text-[13px]', check.scheduledAt ? 'text-text-muted' : 'text-text-subtle')}>
+            <p className={cn('mt-0.5 truncate text-[13px]', check.scheduledAt ? 'text-text-muted' : 'italic text-text-muted')}>
               {when}
             </p>
           </div>
@@ -45,7 +45,7 @@ export function ComposerPreview({
         <p
           className={cn(
             'whitespace-pre-wrap break-words px-4 py-3 text-[15px] leading-relaxed',
-            !form.content.trim() && 'text-text-subtle',
+            !form.content.trim() && 'italic text-text-muted',
           )}
         >
           {form.content.trim() ? form.content : 'Your post will appear here.'}
