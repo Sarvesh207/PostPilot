@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { ComposerHost } from '../features/composer/Composer';
 import { DesktopQueue, MobileQueue } from '../features/queue/QueuePage';
 import { DeletePostDialog } from '../features/queue/postActions';
 import { useRoute } from '../lib/route';
@@ -32,6 +33,7 @@ export function App() {
           {page}
         </MobileShell>
       )}
+      <ComposerHost desktop={desktop} />
       <DeletePostDialog />
       <ToastHost desktop={desktop} />
     </>

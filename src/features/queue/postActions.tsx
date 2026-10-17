@@ -34,10 +34,7 @@ export async function reconnectWithToast(platform: Platform) {
   }
 }
 
-/** Placeholder until the composer lands in Phase 4. */
-export function openComposer(postId?: string) {
-  toast(postId ? 'Editing arrives with the composer in Phase 4' : 'The composer arrives in Phase 4');
-}
+export { openComposer } from '../composer/composerStore';
 
 export const requestDelete = (id: string) => ui.setState({ open: true, postId: id, deleted: false });
 
