@@ -93,7 +93,7 @@ export function SummaryCards(props: SummaryProps) {
             </span>
             <span className="flex items-end justify-between gap-2">
               <span className="text-[28px] font-semibold leading-none tabular-nums">{it.count}</span>
-              <span className={cn('truncate text-xs text-text-muted', it.noteClass)}>{it.note}</span>
+              <span className={cn('truncate text-xs', it.noteClass || 'text-text-muted')}>{it.note}</span>
             </span>
           </button>
         );

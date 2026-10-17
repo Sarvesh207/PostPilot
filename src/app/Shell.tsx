@@ -6,9 +6,17 @@ import { cn } from '../lib/cn';
 import { linkProps, type Route } from '../lib/route';
 import { AccountsList } from './AccountsList';
 
-export function Logo({ className }: { className?: string }) {
+/** Accent tile on mobile; the desktop sidebar uses the ink tile from the mockup. */
+export function Logo({ className, ink = false }: { className?: string; ink?: boolean }) {
   return (
-    <span className={cn('grid size-9 shrink-0 place-items-center rounded-[10px] bg-accent text-on-accent', className)} aria-hidden="true">
+    <span
+      className={cn(
+        'grid size-9 shrink-0 place-items-center rounded-[10px]',
+        ink ? 'bg-text text-bg' : 'bg-accent text-on-accent',
+        className,
+      )}
+      aria-hidden="true"
+    >
       <Send className="size-[18px]" />
     </span>
   );
@@ -41,7 +49,7 @@ export function DesktopShell({
     <div className="min-h-dvh pl-60">
       <aside className="fixed inset-y-0 left-0 flex w-60 flex-col border-r border-border-subtle bg-surface px-3 pb-3 pt-4">
         <div className="flex items-center gap-2.5 px-2">
-          <Logo />
+          <Logo ink />
           <div className="leading-tight">
             <p className="text-[15px] font-semibold">PostPilot</p>
             <p className="text-xs text-text-muted">[Your brand]</p>
@@ -57,10 +65,10 @@ export function DesktopShell({
                     {...linkProps(item.route)}
                     aria-current={route === item.route ? 'page' : undefined}
                     className={cn(
-                      'focus-ring flex h-10 items-center gap-3 rounded-lg px-3 text-sm [&_svg]:size-4',
+                      'focus-ring flex h-10 items-center gap-3 rounded-lg border px-3 text-sm [&_svg]:size-4',
                       route === item.route
-                        ? 'bg-surface-sunken font-medium text-text'
-                        : 'text-text-muted hover:bg-surface-hover hover:text-text',
+                        ? 'border-border-subtle bg-surface font-medium text-text shadow-[0_1px_2px_rgb(15_23_42/0.06)] dark:bg-surface-raised'
+                        : 'border-transparent text-text-muted hover:bg-surface-hover hover:text-text',
                     )}
                   >
                     {item.icon}

@@ -11,9 +11,12 @@ const TONES = [
 // Remember URLs that failed so re-renders don't re-request them.
 const broken = new Set<string>();
 
+// Hashes the file name only, with a multiplier picked so the demo images get
+// the same tints as the mockups. Any other URL just gets a stable tint.
 function toneFor(url: string) {
+  const name = url.split('/').pop()!.replace(/\.\w+$/, '');
   let h = 0;
-  for (const ch of url) h = (h * 31 + ch.charCodeAt(0)) | 0;
+  for (const ch of name) h = (h * 19 + ch.charCodeAt(0)) | 0;
   return TONES[Math.abs(h) % TONES.length];
 }
 
