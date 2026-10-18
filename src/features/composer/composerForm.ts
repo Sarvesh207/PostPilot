@@ -9,18 +9,18 @@ import type { Post, PostDraft } from '../../lib/types';
 export interface ComposerForm {
   content: string;
   platforms: Platform[];
-  imageUrl: string;
+  mediaUrl: string;
   /** "YYYY-MM-DD", as a native date input reports it. */
   date: string;
   /** "HH:mm", as a native time input reports it. */
   time: string;
 }
 
-export const EMPTY_FORM: ComposerForm = { content: '', platforms: [], imageUrl: '', date: '', time: '' };
+export const EMPTY_FORM: ComposerForm = { content: '', platforms: [], mediaUrl: '', date: '', time: '' };
 
 export function formFromPost(post: Post, tz = localTimeZone()): ComposerForm {
   const { date, time } = isoToZoned(post.scheduledAt, tz);
-  return { content: post.content, platforms: [...post.platforms], imageUrl: post.imageUrl ?? '', date, time };
+  return { content: post.content, platforms: [...post.platforms], mediaUrl: post.mediaUrl ?? '', date, time };
 }
 
 export interface OverLimit {
@@ -36,7 +36,7 @@ export interface FormCheck {
   /** Instant the date + time fields describe, once both are filled. */
   scheduledAt: string | null;
   pastSchedule: boolean;
-  badImageUrl: boolean;
+  badMediaUrl: boolean;
   /** Everything required is present and valid. */
   valid: boolean;
 }
@@ -60,7 +60,7 @@ export function checkForm(form: ComposerForm, now: Date = new Date(), tz = local
     .filter((o) => o.by > 0);
   const scheduledAt = form.date && form.time ? zonedToIso(form.date, form.time, tz) : null;
   const pastSchedule = scheduledAt !== null && new Date(scheduledAt).getTime() <= now.getTime();
-  const badImageUrl = form.imageUrl.trim() !== '' && !isImageUrl(form.imageUrl);
+  const badMediaUrl = form.mediaUrl.trim() !== '' && !isImageUrl(form.mediaUrl);
 
   return {
     chars,
@@ -68,14 +68,14 @@ export function checkForm(form: ComposerForm, now: Date = new Date(), tz = local
     overLimit,
     scheduledAt,
     pastSchedule,
-    badImageUrl,
+    badMediaUrl,
     valid:
       form.content.trim() !== '' &&
       counted.length > 0 &&
       overLimit.length === 0 &&
       scheduledAt !== null &&
       !pastSchedule &&
-      !badImageUrl,
+      !badMediaUrl,
   };
 }
 
@@ -94,7 +94,7 @@ export function toDraft(form: ComposerForm, tz = localTimeZone()): PostDraft {
   return {
     content: form.content,
     platforms: PLATFORMS.map((p) => p.id).filter((id) => form.platforms.includes(id)),
-    imageUrl: form.imageUrl.trim() || undefined,
+    mediaUrl: form.mediaUrl.trim() || undefined,
     scheduledAt: zonedToIso(form.date, form.time, tz),
   };
 }
@@ -102,7 +102,7 @@ export function toDraft(form: ComposerForm, tz = localTimeZone()): PostDraft {
 export function isDirty(form: ComposerForm, initial: ComposerForm): boolean {
   return (
     form.content !== initial.content ||
-    form.imageUrl !== initial.imageUrl ||
+    form.mediaUrl !== initial.mediaUrl ||
     form.date !== initial.date ||
     form.time !== initial.time ||
     form.platforms.length !== initial.platforms.length ||

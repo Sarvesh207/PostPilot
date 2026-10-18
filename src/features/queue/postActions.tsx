@@ -16,7 +16,12 @@ const ui = createStore<{ open: boolean; postId: string | null; deleting: boolean
 });
 
 export async function retryWithToast(id: string) {
-  const outcome = await actions.retryPost(id);
+  const pending = actions.retryPost(id);
+  // The optimistic update has already removed the Retry button; keep focus on the card.
+  document.getElementById(menuTriggerId(id))?.focus();
+  const outcome = await pending;
+  // Under the Failed filter a successful retry takes the card off screen.
+  if (document.activeElement === document.body) document.getElementById('main-content')?.focus({ preventScroll: true });
   if (outcome.ok) {
     toast(outcome.rescheduled ? `Post rescheduled for ${relativeDateTime(outcome.post.scheduledAt)}` : 'Post rescheduled');
   } else if (outcome.message !== 'Already retrying') {

@@ -16,7 +16,7 @@ export function ComposerPreview({
   now: Date;
   className?: string;
 }) {
-  const imageUrl = form.imageUrl.trim();
+  const mediaUrl = form.mediaUrl.trim();
   const when = check.scheduledAt
     ? `${relativeDateTime(check.scheduledAt, now)} ${timeZoneAbbr(check.scheduledAt)}`
     : 'Pick a date and time';
@@ -51,8 +51,8 @@ export function ComposerPreview({
           {form.content.trim() ? form.content : 'Your post will appear here.'}
         </p>
 
-        {imageUrl && !check.badImageUrl && (
-          <PostThumb url={imageUrl} className="aspect-[16/10] w-full rounded-none [&_svg]:size-9" />
+        {mediaUrl && !check.badMediaUrl && (
+          <PostThumb url={mediaUrl} className="aspect-[16/10] w-full rounded-none [&_svg]:size-9" />
         )}
 
         <div className="flex min-h-12 items-center gap-2 px-4 py-3 text-[13px] text-text-muted">

@@ -113,7 +113,7 @@ export function DesktopQueue() {
               <SegmentedControl aria-label="View" size="sm" value="list" onChange={() => {}} options={VIEW_OPTIONS} />
             </div>
           </div>
-          {ready && <WeekStrip days={view.week} visibleKeys={view.groupKeys} />}
+          {ready && <WeekStrip weeks={view.weeks} visibleKeys={view.groupKeys} />}
         </div>
 
         <div className="mt-6">

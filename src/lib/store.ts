@@ -2,8 +2,9 @@
 // immutably, and React's useSyncExternalStore (via createStore) to subscribe.
 
 import { useEffect, useMemo, useState } from 'react';
-import { ApiError, createMockApi, scenarioFromUrl, type Api } from './api';
+import { ApiError, createMockApi, retryScheduledAt, scenarioFromUrl, type Api } from './api';
 import { createStore } from './createStore';
+import { filtersFromSearch, filtersToSearch } from './filterParams';
 import type { Platform } from './platforms';
 import {
   activeFilterCount,
@@ -35,12 +36,12 @@ export type RetryOutcome = { ok: true; post: Post; rescheduled: boolean } | { ok
 
 const errorMessage = (e: unknown, fallback: string) => (e instanceof ApiError ? e.message : fallback);
 
-export function createAppStore(api: Api) {
+export function createAppStore(api: Api, initialFilters: Filters = EMPTY_FILTERS) {
   const { getState, setState, subscribe, useStore } = createStore<AppState>({
     posts: [],
     accounts: null,
     load: 'idle',
-    filters: EMPTY_FILTERS,
+    filters: initialFilters,
     retrying: {},
     reconnecting: {},
   });
@@ -92,15 +93,34 @@ export function createAppStore(api: Api) {
       }
     },
 
-    /** Never throws: the outcome drives the success / failure toast. */
+    /**
+     * Optimistic: the post shows as scheduled at once and goes back to failed,
+     * with its error, if the server refuses. Never throws: the outcome drives
+     * the success / failure toast.
+     */
     async retryPost(id: string): Promise<RetryOutcome> {
+      const original = getState().posts.find((p) => p.id === id);
       if (getState().retrying[id]) return { ok: false, message: 'Already retrying' };
-      setState((s) => ({ retrying: { ...s.retrying, [id]: true } }));
+      if (!original || original.status !== 'failed') return { ok: false, message: 'Only failed posts can be retried' };
+
+      const optimistic: Post = {
+        ...original,
+        status: 'scheduled',
+        scheduledAt: retryScheduledAt(original.scheduledAt, new Date()),
+        errorMessage: undefined,
+        failure: undefined,
+      };
+      setState((s) => ({
+        posts: s.posts.map((p) => (p.id === id ? optimistic : p)),
+        retrying: { ...s.retrying, [id]: true },
+      }));
       try {
         const { post, rescheduled } = await api.retryPost(id);
         replacePost(post);
         return { ok: true, post, rescheduled };
       } catch (e) {
+        // Roll back, unless the post was edited or deleted in the meantime.
+        setState((s) => ({ posts: s.posts.map((p) => (p === optimistic ? original : p)) }));
         return { ok: false, message: errorMessage(e, 'Retry failed — please try again') };
       } finally {
         setState((s) => ({ retrying: without(s.retrying, id) }));
@@ -136,6 +156,7 @@ export function createAppStore(api: Api) {
         };
       }),
     clearFilters: () => setState({ filters: EMPTY_FILTERS }),
+    replaceFilters: (filters: Filters) => setState({ filters }),
   };
 
   return { getState, subscribe, useStore, actions };
@@ -143,8 +164,33 @@ export function createAppStore(api: Api) {
 
 export type AppStore = ReturnType<typeof createAppStore>;
 
-export const appStore = createAppStore(createMockApi({ scenario: scenarioFromUrl() }));
+export const appStore = createAppStore(
+  createMockApi({ scenario: scenarioFromUrl() }),
+  filtersFromSearch(typeof location === 'undefined' ? '' : location.search),
+);
 export const actions = appStore.actions;
+
+/**
+ * Mirrors filters into the query string. replaceState, not pushState, so
+ * typing a search doesn't add a history entry per keystroke.
+ */
+export function syncFiltersWithUrl(store: AppStore = appStore): () => void {
+  let last = store.getState().filters;
+  const unsubscribe = store.subscribe(() => {
+    const { filters } = store.getState();
+    if (filters === last) return;
+    last = filters;
+    const search = filtersToSearch(filters, location.search);
+    if (search !== location.search) history.replaceState(history.state, '', location.pathname + search + location.hash);
+  });
+  // Back/forward between pages restores whatever filters that URL carries.
+  const onPop = () => store.actions.replaceFilters((last = filtersFromSearch(location.search)));
+  window.addEventListener('popstate', onPop);
+  return () => {
+    unsubscribe();
+    window.removeEventListener('popstate', onPop);
+  };
+}
 
 /** Subscribe to a slice of app state (see createStore for the selector rule). */
 export const useAppState = appStore.useStore;
@@ -163,19 +209,25 @@ export function useNow(intervalMs = 60_000): Date {
 export function useQueueView() {
   const posts = useAppState((s) => s.posts);
   const filters = useAppState((s) => s.filters);
+  const retrying = useAppState((s) => s.retrying);
   const now = useNow();
 
   return useMemo(() => {
-    const visible = filterPosts(posts, filters);
+    // A post being retried is already optimistically "scheduled"; keep it on
+    // screen (e.g. under the Failed filter) until the server answers.
+    const matched = new Set(filterPosts(posts, filters));
+    const visible = posts.filter((p) => matched.has(p) || retrying[p.id]);
     const groups = groupByDay(visible, now);
-    const week = weekSummary(posts, now);
+    // Last week, this week and next week, for the header carousel.
+    const weeks = [-1, 0, 1].map((offset) => weekSummary(posts, now, undefined, offset));
+    const week = weeks[1];
     return {
       groups,
       groupKeys: new Set(groups.map((g) => g.key)),
       visibleCount: visible.length,
       counts: countByStatus(posts),
       failed: posts.filter((p) => p.status === 'failed'),
-      week,
+      weeks,
       weekCount: week.reduce((n, d) => n + d.count, 0),
       next: nextScheduled(posts, now),
       lastPublished: lastPublished(posts),
@@ -183,5 +235,5 @@ export function useQueueView() {
       filtersActive: hasActiveFilters(filters),
       now,
     };
-  }, [posts, filters, now]);
+  }, [posts, filters, retrying, now]);
 }

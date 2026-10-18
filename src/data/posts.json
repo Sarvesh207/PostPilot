@@ -1,0 +1,361 @@
+{
+  "anchorDay": "2026-10-14",
+  "posts": [
+    {
+      "id": "post-01",
+      "content": "Diwali Mega Sale is LIVE 🪔 Flat 40% off on all ethnic wear. Shop now before stocks run out!",
+      "platforms": [
+        "facebook",
+        "instagram",
+        "x"
+      ],
+      "mediaUrl": "https://cdn.yourbrand.in/campaigns/diwali-sale-hero.jpg",
+      "scheduledAt": "2026-10-14T04:30:00.000Z",
+      "status": "published"
+    },
+    {
+      "id": "post-02",
+      "content": "Our Navratri lookbook goes live tonight. Tap the link in bio for early access to the full collection.",
+      "platforms": [
+        "instagram"
+      ],
+      "scheduledAt": "2026-10-14T09:00:00.000Z",
+      "status": "failed",
+      "errorMessage": "Instagram access token expired",
+      "failure": {
+        "code": "token_expired",
+        "platform": "instagram"
+      }
+    },
+    {
+      "id": "post-03",
+      "content": "Behind the scenes of our new autumn shoot 📸",
+      "platforms": [
+        "tiktok",
+        "instagram"
+      ],
+      "mediaUrl": "https://cdn.yourbrand.in/campaigns/autumn-bts.jpg",
+      "scheduledAt": "2026-10-14T12:30:00.000Z",
+      "status": "failed",
+      "errorMessage": "TikTok video upload required",
+      "failure": {
+        "code": "media_required",
+        "platform": "tiktok"
+      }
+    },
+    {
+      "id": "post-04",
+      "content": "Festive gift hampers are back. Handpicked sweets, diyas and dry fruits in curated boxes from ₹999. Pre-order today and we will deliver before Dhanteras, anywhere in Pune and Mumbai.",
+      "platforms": [
+        "facebook",
+        "instagram"
+      ],
+      "mediaUrl": "https://cdn.yourbrand.in/campaigns/gift-hampers.jpg",
+      "scheduledAt": "2026-10-14T14:30:00.000Z",
+      "status": "scheduled"
+    },
+    {
+      "id": "post-05",
+      "content": "Flash deal at 10 AM: 25% off on silk sarees for the next 6 hours only. No code needed.",
+      "platforms": [
+        "facebook",
+        "x"
+      ],
+      "scheduledAt": "2026-10-15T04:30:00.000Z",
+      "status": "scheduled"
+    },
+    {
+      "id": "post-06",
+      "content": "New on the menu: masala chai cold brew 🧋 Available at all Pune outlets from Friday.",
+      "platforms": [
+        "x",
+        "instagram"
+      ],
+      "scheduledAt": "2026-10-15T07:30:00.000Z",
+      "status": "failed",
+      "errorMessage": "X API rate limit exceeded",
+      "failure": {
+        "code": "rate_limited",
+        "platform": "x"
+      }
+    },
+    {
+      "id": "post-07",
+      "content": "Weekend workshop: learn latte art with our head barista ☕ Limited seats.",
+      "platforms": [
+        "facebook",
+        "instagram",
+        "tiktok"
+      ],
+      "mediaUrl": "https://cdn.yourbrand.in/campaigns/latte-workshop.jpg",
+      "scheduledAt": "2026-10-16T05:30:00.000Z",
+      "status": "scheduled"
+    },
+    {
+      "id": "post-08",
+      "content": "Diwali lookbook drops tomorrow. Turn on notifications so you do not miss it.",
+      "platforms": [
+        "instagram",
+        "tiktok"
+      ],
+      "scheduledAt": "2026-10-16T14:00:00.000Z",
+      "status": "scheduled"
+    },
+    {
+      "id": "post-09",
+      "content": "Last chance: the Diwali Mega Sale ends at midnight. Flat 40% off on all ethnic wear, free shipping above ₹1,499.",
+      "platforms": [
+        "facebook",
+        "instagram",
+        "x",
+        "tiktok"
+      ],
+      "mediaUrl": "https://cdn.yourbrand.in/campaigns/diwali-last-call.jpg",
+      "scheduledAt": "2026-10-17T03:30:00.000Z",
+      "status": "scheduled"
+    },
+    {
+      "id": "post-10",
+      "content": "Sunday brunch menu is here 🥞 Masala pancakes, filter coffee and live music from 11 AM.",
+      "platforms": [
+        "facebook",
+        "instagram"
+      ],
+      "mediaUrl": "https://cdn.yourbrand.in/campaigns/brunch-menu.jpg",
+      "scheduledAt": "2026-10-18T04:30:00.000Z",
+      "status": "scheduled"
+    },
+    {
+      "id": "post-11",
+      "content": "Which festive sweet are you saving for last? 🍬 Reply with your pick: kaju katli, motichoor or gulab jamun.",
+      "platforms": [
+        "x"
+      ],
+      "scheduledAt": "2026-10-18T12:00:00.000Z",
+      "status": "scheduled"
+    },
+    {
+      "id": "post-12",
+      "content": "Get ready with us: 3 festive looks under ₹2,999 ✨ Full video at 7 PM.",
+      "platforms": [
+        "instagram",
+        "tiktok"
+      ],
+      "mediaUrl": "https://cdn.yourbrand.in/campaigns/festive-grwm.jpg",
+      "scheduledAt": "2026-10-19T04:00:00.000Z",
+      "status": "scheduled"
+    },
+    {
+      "id": "post-13",
+      "content": "Restock alert: our best-selling bandhani dupattas are back in 6 new colours.",
+      "platforms": [
+        "x"
+      ],
+      "scheduledAt": "2026-10-19T07:30:00.000Z",
+      "status": "failed",
+      "errorMessage": "X API rate limit exceeded",
+      "failure": {
+        "code": "rate_limited",
+        "platform": "x"
+      }
+    },
+    {
+      "id": "post-14",
+      "content": "Watch our artisans hand-paint 200 diyas in one afternoon 🪔",
+      "platforms": [
+        "tiktok"
+      ],
+      "mediaUrl": "https://cdn.yourbrand.in/campaigns/diya-painting.jpg",
+      "scheduledAt": "2026-10-19T13:30:00.000Z",
+      "status": "scheduled"
+    },
+    {
+      "id": "post-15",
+      "content": "Store timings for the festive week: all Pune and Mumbai stores stay open from 9 AM to 11 PM until Bhai Dooj. Our Koregaon Park store will host a free mehendi corner every evening from 5 PM. Bring your friends!",
+      "platforms": [
+        "facebook"
+      ],
+      "scheduledAt": "2026-10-20T02:30:00.000Z",
+      "status": "scheduled"
+    },
+    {
+      "id": "post-16",
+      "content": "Customer spotlight 💛 Priya styled our mirror-work kurta three ways for her office Diwali party.",
+      "platforms": [
+        "instagram"
+      ],
+      "mediaUrl": "https://cdn.yourbrand.in/campaigns/customer-spotlight.jpg",
+      "scheduledAt": "2026-10-20T06:30:00.000Z",
+      "status": "failed",
+      "errorMessage": "Instagram access token expired",
+      "failure": {
+        "code": "token_expired",
+        "platform": "instagram"
+      }
+    },
+    {
+      "id": "post-17",
+      "content": "Countdown begins: 7 days to Diwali. What's on your festive to-do list?",
+      "platforms": [
+        "instagram",
+        "x"
+      ],
+      "scheduledAt": "2026-10-20T15:00:00.000Z",
+      "status": "scheduled"
+    },
+    {
+      "id": "post-18",
+      "content": "Introducing our Diwali gift cards 🎁 Pick any amount from ₹500 and let them choose.",
+      "platforms": [
+        "facebook",
+        "instagram",
+        "x",
+        "tiktok"
+      ],
+      "mediaUrl": "https://cdn.yourbrand.in/campaigns/gift-cards.jpg",
+      "scheduledAt": "2026-10-21T05:30:00.000Z",
+      "status": "scheduled"
+    },
+    {
+      "id": "post-19",
+      "content": "Pro tip: order by 6 PM for same-day delivery anywhere in Pune 🚚",
+      "platforms": [
+        "x"
+      ],
+      "scheduledAt": "2026-10-21T10:30:00.000Z",
+      "status": "scheduled"
+    },
+    {
+      "id": "post-20",
+      "content": "Rangoli inspiration for this weekend 🌸 Save this post for later.",
+      "platforms": [
+        "instagram"
+      ],
+      "mediaUrl": "https://cdn.yourbrand.in/campaigns/rangoli-ideas.jpg",
+      "scheduledAt": "2026-10-22T05:00:00.000Z",
+      "status": "scheduled"
+    },
+    {
+      "id": "post-21",
+      "content": "Live tonight at 6: our founder answers your festive styling questions.",
+      "platforms": [
+        "facebook",
+        "tiktok"
+      ],
+      "scheduledAt": "2026-10-22T12:30:00.000Z",
+      "status": "scheduled"
+    },
+    {
+      "id": "post-22",
+      "content": "Dhanteras special: a free silver-plated coin with every purchase above ₹4,999.",
+      "platforms": [
+        "facebook",
+        "instagram"
+      ],
+      "mediaUrl": "https://cdn.yourbrand.in/campaigns/dhanteras-coin.jpg",
+      "scheduledAt": "2026-10-23T03:30:00.000Z",
+      "status": "scheduled"
+    },
+    {
+      "id": "post-23",
+      "content": "Unboxing our festive hamper in 30 seconds ⏱️",
+      "platforms": [
+        "x",
+        "tiktok"
+      ],
+      "scheduledAt": "2026-10-23T08:30:00.000Z",
+      "status": "scheduled"
+    },
+    {
+      "id": "post-24",
+      "content": "Thank you for 50,000 followers 🙏 A small surprise drops tomorrow morning.",
+      "platforms": [
+        "instagram"
+      ],
+      "scheduledAt": "2026-10-23T15:30:00.000Z",
+      "status": "scheduled"
+    },
+    {
+      "id": "post-25",
+      "content": "Happy Diwali from all of us 🪔 May your home be full of light, sweets and laughter.",
+      "platforms": [
+        "facebook",
+        "instagram",
+        "x"
+      ],
+      "mediaUrl": "https://cdn.yourbrand.in/campaigns/diwali-greeting.jpg",
+      "scheduledAt": "2026-10-24T03:00:00.000Z",
+      "status": "scheduled"
+    },
+    {
+      "id": "post-26",
+      "content": "Our team's Diwali dance-off 💃 Vote for your favourite in the comments.",
+      "platforms": [
+        "tiktok"
+      ],
+      "scheduledAt": "2026-10-24T06:30:00.000Z",
+      "status": "scheduled"
+    },
+    {
+      "id": "post-27",
+      "content": "Stores are closed today for Govardhan Puja. Online orders ship on Thursday.",
+      "platforms": [
+        "facebook",
+        "x"
+      ],
+      "scheduledAt": "2026-10-25T04:30:00.000Z",
+      "status": "scheduled"
+    },
+    {
+      "id": "post-28",
+      "content": "Post-Diwali reset: 5 ways to restyle your festive outfits for everyday wear.",
+      "platforms": [
+        "instagram",
+        "tiktok"
+      ],
+      "mediaUrl": "https://cdn.yourbrand.in/campaigns/restyle-tips.jpg",
+      "scheduledAt": "2026-10-25T13:30:00.000Z",
+      "status": "scheduled"
+    },
+    {
+      "id": "post-29",
+      "content": "Bhai Dooj gifts sorted? Our curated edits for brothers and sisters are live now.",
+      "platforms": [
+        "x"
+      ],
+      "scheduledAt": "2026-10-26T03:30:00.000Z",
+      "status": "scheduled"
+    },
+    {
+      "id": "post-30",
+      "content": "Winter collection sneak peek ❄️ Handwoven shawls in 12 new shades.",
+      "platforms": [
+        "facebook",
+        "instagram"
+      ],
+      "mediaUrl": "https://cdn.yourbrand.in/campaigns/winter-peek.jpg",
+      "scheduledAt": "2026-10-26T10:00:00.000Z",
+      "status": "scheduled"
+    },
+    {
+      "id": "post-31",
+      "content": "Wedding season is here 💍 Book a free styling session at any of our stores.",
+      "platforms": [
+        "instagram",
+        "x",
+        "tiktok"
+      ],
+      "scheduledAt": "2026-10-27T05:30:00.000Z",
+      "status": "scheduled"
+    },
+    {
+      "id": "post-32",
+      "content": "Share your festive photos with #CelebrateWithUs and win a ₹5,000 voucher. Winners announced on Monday.",
+      "platforms": [
+        "facebook"
+      ],
+      "scheduledAt": "2026-10-27T13:00:00.000Z",
+      "status": "scheduled"
+    }
+  ]
+}

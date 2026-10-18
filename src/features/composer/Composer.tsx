@@ -46,7 +46,7 @@ function ComposerDialog({ post, desktop }: { post?: Post; desktop: boolean }) {
   const [initial] = useState(() => (post ? formFromPost(post, tz) : EMPTY_FORM));
   const [form, setForm] = useState<ComposerForm>(initial);
   const [submitting, setSubmitting] = useState(false);
-  const [touched, setTouched] = useState({ platforms: false, imageUrl: false });
+  const [touched, setTouched] = useState({ platforms: false, mediaUrl: false });
   const [confirmDiscard, setConfirmDiscard] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const now = useNow(15_000);
@@ -66,7 +66,7 @@ function ComposerDialog({ post, desktop }: { post?: Post; desktop: boolean }) {
 
   const submit = async (e?: FormEvent) => {
     e?.preventDefault();
-    setTouched({ platforms: true, imageUrl: true });
+    setTouched({ platforms: true, mediaUrl: true });
     if (!check.valid || submitting) return;
     setSubmitting(true);
     try {
@@ -230,8 +230,8 @@ interface FieldsProps {
   form: ComposerForm;
   check: ReturnType<typeof checkForm>;
   update: (patch: Partial<ComposerForm>) => void;
-  touched: { platforms: boolean; imageUrl: boolean };
-  setTouched: (fn: (t: { platforms: boolean; imageUrl: boolean }) => { platforms: boolean; imageUrl: boolean }) => void;
+  touched: { platforms: boolean; mediaUrl: boolean };
+  setTouched: (fn: (t: { platforms: boolean; mediaUrl: boolean }) => { platforms: boolean; mediaUrl: boolean }) => void;
   submitting: boolean;
   desktop: boolean;
   textareaRef: RefObject<HTMLTextAreaElement | null>;
@@ -250,8 +250,8 @@ function ComposerFields({ form, check, update, touched, setTouched, submitting, 
 
   const limitError = overLimitMessage(check.overLimit);
   const platformError = touched.platforms && form.platforms.length === 0;
-  const imageError = touched.imageUrl && check.badImageUrl;
-  const showImage = form.imageUrl.trim() !== '' && !check.badImageUrl;
+  const imageError = touched.mediaUrl && check.badMediaUrl;
+  const showImage = form.mediaUrl.trim() !== '' && !check.badMediaUrl;
 
   const togglePlatform = (p: Platform) => {
     setTouched((t) => ({ ...t, platforms: true }));
@@ -323,20 +323,20 @@ function ComposerFields({ form, check, update, touched, setTouched, submitting, 
             spellCheck={false}
             placeholder="https://…"
             leadingIcon={<Link2 />}
-            value={form.imageUrl}
-            onChange={(e) => update({ imageUrl: e.target.value })}
-            onBlur={() => setTouched((t) => ({ ...t, imageUrl: true }))}
+            value={form.mediaUrl}
+            onChange={(e) => update({ mediaUrl: e.target.value })}
+            onBlur={() => setTouched((t) => ({ ...t, mediaUrl: true }))}
           />
         </Field>
         {showImage && (
           <div className="flex items-center gap-3 rounded-[10px] border border-border-subtle bg-surface-sunken p-2 pr-1">
-            <PostThumb url={form.imageUrl.trim()} className="size-12" />
-            <span className="min-w-0 flex-1 truncate text-[13px] text-text-muted">{form.imageUrl.trim()}</span>
+            <PostThumb url={form.mediaUrl.trim()} className="size-12" />
+            <span className="min-w-0 flex-1 truncate text-[13px] text-text-muted">{form.mediaUrl.trim()}</span>
             <button
               type="button"
               aria-label="Remove image"
               onClick={() => {
-                update({ imageUrl: '' });
+                update({ mediaUrl: '' });
                 imageRef.current?.focus();
               }}
               className="focus-ring grid size-11 shrink-0 place-items-center rounded-lg text-text-muted hover:bg-surface-hover hover:text-text sm:size-9"

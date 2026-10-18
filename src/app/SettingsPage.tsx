@@ -1,8 +1,9 @@
-import type { ReactNode } from 'react';
+import { useState, type ReactNode } from 'react';
 import { ThemeSwitcher } from '../components/ThemeSwitcher';
 import { Button } from '../components/ui/Button';
+import { Modal } from '../components/ui/Dialog';
 import { cn } from '../lib/cn';
-import { actions } from '../lib/store';
+import { actions, useAppState } from '../lib/store';
 import { toast } from '../lib/toast';
 import { AccountsList } from './AccountsList';
 import { Logo } from './Shell';
@@ -20,7 +21,49 @@ function Card({ title, description, children }: { title: string; description: st
   );
 }
 
+function ClearPostsDialog({ open, onOpenChange }: { open: boolean; onOpenChange: (open: boolean) => void }) {
+  const [clearing, setClearing] = useState(false);
+  const count = useAppState((s) => (s.load === 'ready' ? s.posts.length : null));
+
+  const clear = async () => {
+    setClearing(true);
+    try {
+      await actions.resetDemo('empty');
+      toast('All posts cleared');
+      onOpenChange(false);
+    } catch {
+      toast("Couldn't clear posts — please try again", 'error');
+    } finally {
+      setClearing(false);
+    }
+  };
+
+  return (
+    <Modal
+      open={open}
+      onOpenChange={(next) => !clearing && onOpenChange(next)}
+      title="Clear all posts?"
+      description={`${count === null ? 'Every post' : `All ${count} ${count === 1 ? 'post' : 'posts'}`} will be removed from your queue, including scheduled ones.`}
+      footer={
+        <>
+          <Button onClick={() => onOpenChange(false)} disabled={clearing}>
+            Cancel
+          </Button>
+          <Button variant="destructive" onClick={clear} loading={clearing} loadingText="Clearing…">
+            Clear all posts
+          </Button>
+        </>
+      }
+    >
+      <p className="text-sm text-text-muted">
+        Your connected accounts stay as they are. Use “Restore demo posts” to bring the demo data back.
+      </p>
+    </Modal>
+  );
+}
+
 export function SettingsPage({ desktop }: { desktop: boolean }) {
+  const [confirmClear, setConfirmClear] = useState(false);
   return (
     <div>
       <header
@@ -57,17 +100,12 @@ export function SettingsPage({ desktop }: { desktop: boolean }) {
             >
               Restore demo posts
             </Button>
-            <Button
-              variant="ghost"
-              onClick={async () => {
-                await actions.resetDemo('empty');
-                toast('All posts cleared');
-              }}
-            >
+            <Button variant="ghost" onClick={() => setConfirmClear(true)}>
               Clear all posts
             </Button>
           </div>
         </Card>
+        <ClearPostsDialog open={confirmClear} onOpenChange={setConfirmClear} />
       </main>
     </div>
   );

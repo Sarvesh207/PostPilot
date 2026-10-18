@@ -16,11 +16,23 @@ import type { Filters } from './types';
 const IST = 'Asia/Kolkata';
 // Wed 14 Oct 2026, 9:00 AM IST — the morning of the mockup's "Today".
 const NOW = new Date('2026-10-14T03:30:00Z');
-const posts = seedPosts(NOW, IST);
+const allPosts = seedPosts(NOW, IST);
+// The first nine are the mockup's posts (Today to Saturday); the counts below come from it.
+const posts = allPosts.slice(0, 9);
 const f = (patch: Partial<Filters>): Filters => ({ ...EMPTY_FILTERS, ...patch });
 
 describe('seed data', () => {
-  it('matches the mockup summary counts', () => {
+  it('has at least 30 posts with the fields from the brief', () => {
+    expect(allPosts.length).toBeGreaterThanOrEqual(30);
+    for (const p of allPosts) {
+      expect(p).toMatchObject({ id: expect.any(String), content: expect.any(String), scheduledAt: expect.any(String) });
+      expect(p.platforms.length).toBeGreaterThan(0);
+      expect(p.scheduledAt.endsWith('Z')).toBe(true);
+      expect(Boolean(p.errorMessage)).toBe(p.status === 'failed');
+    }
+  });
+
+  it('starts with the mockup summary counts', () => {
     expect(countByStatus(posts)).toEqual({ total: 9, scheduled: 5, published: 1, failed: 3 });
   });
 
@@ -113,5 +125,15 @@ describe('weekSummary', () => {
     expect(week.map((d) => d.count)).toEqual([0, 0, 4, 2, 2, 1, 0]);
     expect(week.findIndex((d) => d.isToday)).toBe(2);
     expect(week.filter((d) => d.isPast)).toHaveLength(2);
+  });
+
+  it('shifts by whole weeks', () => {
+    const last = weekSummary(allPosts, NOW, IST, -1);
+    const next = weekSummary(allPosts, NOW, IST, 1);
+    expect([last[0].key, last[6].key]).toEqual(['2026-10-05', '2026-10-11']);
+    expect(last.every((d) => d.isPast && !d.isToday)).toBe(true);
+    expect([next[0].key, next[6].key]).toEqual(['2026-10-19', '2026-10-25']);
+    expect(next.some((d) => d.isPast)).toBe(false);
+    expect(next.reduce((n, d) => n + d.count, 0)).toBe(17);
   });
 });

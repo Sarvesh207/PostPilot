@@ -8,7 +8,7 @@ const NOW = new Date('2026-10-15T04:30:00Z'); // 10:00 AM IST
 const valid: ComposerForm = {
   content: 'Diwali Mega Sale is LIVE 🪔 Flat 40% off',
   platforms: ['x', 'facebook', 'instagram'],
-  imageUrl: '',
+  mediaUrl: '',
   date: '2026-10-16',
   time: '10:00',
 };
@@ -19,7 +19,7 @@ describe('checkForm', () => {
     expect(c.valid).toBe(false);
     expect(c.overLimit).toEqual([]);
     expect(c.pastSchedule).toBe(false);
-    expect(c.badImageUrl).toBe(false);
+    expect(c.badMediaUrl).toBe(false);
     expect(c.scheduledAt).toBeNull();
   });
 
@@ -45,8 +45,8 @@ describe('checkForm', () => {
   it('requires a platform, content and a valid image URL', () => {
     expect(checkForm({ ...valid, platforms: [] }, NOW, TZ).valid).toBe(false);
     expect(checkForm({ ...valid, content: '   ' }, NOW, TZ).valid).toBe(false);
-    const bad = checkForm({ ...valid, imageUrl: 'not a url' }, NOW, TZ);
-    expect(bad.badImageUrl).toBe(true);
+    const bad = checkForm({ ...valid, mediaUrl: 'not a url' }, NOW, TZ);
+    expect(bad.badMediaUrl).toBe(true);
     expect(bad.valid).toBe(false);
   });
 });
@@ -77,11 +77,11 @@ describe('overLimitMessage', () => {
 
 describe('drafts', () => {
   it('converts to a draft in canonical platform order and round-trips through a post', () => {
-    const draft = toDraft({ ...valid, imageUrl: '  https://cdn.yourbrand.in/a.jpg ' }, TZ);
+    const draft = toDraft({ ...valid, mediaUrl: '  https://cdn.yourbrand.in/a.jpg ' }, TZ);
     expect(draft).toEqual({
       content: valid.content,
       platforms: ['facebook', 'instagram', 'x'],
-      imageUrl: 'https://cdn.yourbrand.in/a.jpg',
+      mediaUrl: 'https://cdn.yourbrand.in/a.jpg',
       scheduledAt: '2026-10-16T04:30:00.000Z',
     });
     const post: Post = { ...draft, id: '1', status: 'scheduled', createdAt: '', updatedAt: '' };

@@ -32,7 +32,7 @@ export interface Api {
   deletePost(id: string): Promise<void>;
   retryPost(id: string): Promise<RetryResult>;
   reconnectAccount(platform: Platform): Promise<Accounts>;
-  /** Dev helper: restore the demo posts, or clear everything. */
+  /** Dev helper: restore the demo posts and accounts, or clear posts only (accounts are kept). */
   reset(to: 'seed' | 'empty'): Promise<void>;
 }
 
@@ -44,15 +44,27 @@ export interface MockApiOptions {
   random?: () => number;
   /** [min, max] simulated latency in ms. */
   latency?: [number, number];
-  /** Chance a rate-limited post succeeds on retry. */
-  retrySuccessRate?: number;
+  /** Fixed latency of a retry, in ms. */
+  retryDelay?: number;
+  /** Chance that a retry fails. */
+  retryFailureRate?: number;
 }
 
-const STORAGE_KEY = 'pp-data-v1';
+// Bumped when the stored shape changes, so old saves fall back to fresh demo data.
+const STORAGE_KEY = 'pp-data-v2';
 const RETRY_BUFFER_MS = 5 * 60_000;
 
+/**
+ * When a retried post goes out: its original time, or a few minutes from now
+ * if that has passed. Shared with the store's optimistic update.
+ */
+export function retryScheduledAt(scheduledAt: string, now: Date): string {
+  const earliest = now.getTime() + RETRY_BUFFER_MS;
+  return new Date(scheduledAt).getTime() < earliest ? new Date(earliest).toISOString() : scheduledAt;
+}
+
 interface Db {
-  version: 1;
+  version: 2;
   posts: Post[];
   accounts: Accounts;
 }
@@ -81,24 +93,25 @@ export function createMockApi(opts: MockApiOptions = {}): Api {
   const now = opts.now ?? (() => new Date());
   const random = opts.random ?? Math.random;
   const latency = opts.latency ?? (scenario === 'slow' ? [2000, 3000] : [350, 800]);
-  const successRate = opts.retrySuccessRate ?? 0.7;
+  const retryDelay = opts.retryDelay ?? (scenario === 'slow' ? 3000 : 1000);
+  const retryFailureRate = opts.retryFailureRate ?? 0.2;
   // Demo scenarios stay in memory so they never clobber the user's saved data.
   const storage = scenario === 'default' ? (opts.storage === undefined ? defaultStorage() : opts.storage) : null;
 
   const db: Db = loadDb();
 
   function loadDb(): Db {
-    if (scenario === 'empty') return { version: 1, posts: [], accounts: { ...SEED_ACCOUNTS } };
+    if (scenario === 'empty') return { version: 2, posts: [], accounts: { ...SEED_ACCOUNTS } };
     try {
       const raw = storage?.getItem(STORAGE_KEY);
       if (raw) {
         const parsed = JSON.parse(raw) as Db;
-        if (parsed.version === 1 && Array.isArray(parsed.posts)) return parsed;
+        if (parsed.version === 2 && Array.isArray(parsed.posts)) return parsed;
       }
     } catch {
       // Corrupt or unreadable storage: fall through to fresh demo data.
     }
-    return { version: 1, posts: seedPosts(now()), accounts: { ...SEED_ACCOUNTS } };
+    return { version: 2, posts: seedPosts(now()), accounts: { ...SEED_ACCOUNTS } };
   }
 
   function save() {
@@ -109,9 +122,7 @@ export function createMockApi(opts: MockApiOptions = {}): Api {
     }
   }
 
-  function delay(): Promise<void> {
-    const [min, max] = latency;
-    const ms = min + random() * (max - min);
+  function delay(ms = latency[0] + random() * (latency[1] - latency[0])): Promise<void> {
     return ms > 0 ? new Promise((r) => setTimeout(r, ms)) : Promise.resolve();
   }
 
@@ -149,7 +160,7 @@ export function createMockApi(opts: MockApiOptions = {}): Api {
         id: newId(random),
         content: draft.content,
         platforms: [...draft.platforms],
-        imageUrl: draft.imageUrl || undefined,
+        mediaUrl: draft.mediaUrl || undefined,
         scheduledAt: draft.scheduledAt,
         status: 'scheduled',
         createdAt: stamp,
@@ -168,10 +179,11 @@ export function createMockApi(opts: MockApiOptions = {}): Api {
       Object.assign(post, {
         content: draft.content,
         platforms: [...draft.platforms],
-        imageUrl: draft.imageUrl || undefined,
+        mediaUrl: draft.mediaUrl || undefined,
         scheduledAt: draft.scheduledAt,
         status: 'scheduled',
-        error: undefined,
+        errorMessage: undefined,
+        failure: undefined,
         updatedAt: now().toISOString(),
       } satisfies Partial<Post>);
       save();
@@ -185,25 +197,20 @@ export function createMockApi(opts: MockApiOptions = {}): Api {
       save();
     },
 
+    // Per the brief: a 1 second call that fails 20% of the time, whatever the
+    // original failure was.
     async retryPost(id) {
-      await delay();
+      await delay(retryDelay);
       const post = find(id);
-      if (post.status !== 'failed' || !post.error) throw new ApiError('Only failed posts can be retried', 'invalid');
+      if (post.status !== 'failed') throw new ApiError('Only failed posts can be retried', 'invalid');
+      if (random() < retryFailureRate) throw new ApiError('Retry failed — please try again', 'retry_failed');
 
-      const { code, platform } = post.error;
-      const ok =
-        code === 'token_expired'
-          ? db.accounts[platform] === 'connected'
-          : code === 'media_required'
-            ? !post.platforms.includes(platform) // Fixed only by editing the post.
-            : random() < successRate;
-      if (!ok) throw new ApiError('Retry failed — please try again', 'retry_failed');
-
-      const earliest = now().getTime() + RETRY_BUFFER_MS;
-      const rescheduled = new Date(post.scheduledAt).getTime() < earliest;
-      if (rescheduled) post.scheduledAt = new Date(earliest).toISOString();
+      const scheduledAt = retryScheduledAt(post.scheduledAt, now());
+      const rescheduled = scheduledAt !== post.scheduledAt;
+      post.scheduledAt = scheduledAt;
       post.status = 'scheduled';
-      post.error = undefined;
+      post.errorMessage = undefined;
+      post.failure = undefined;
       post.updatedAt = now().toISOString();
       save();
       return { post: clone(post), rescheduled };
@@ -217,8 +224,12 @@ export function createMockApi(opts: MockApiOptions = {}): Api {
     },
 
     async reset(to) {
-      db.posts = to === 'seed' ? seedPosts(now()) : [];
-      db.accounts = { ...SEED_ACCOUNTS };
+      if (to === 'seed') {
+        db.posts = seedPosts(now());
+        db.accounts = { ...SEED_ACCOUNTS };
+      } else {
+        db.posts = [];
+      }
       save();
     },
   };

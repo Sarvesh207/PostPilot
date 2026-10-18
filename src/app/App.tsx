@@ -3,7 +3,7 @@ import { ComposerHost } from '../features/composer/Composer';
 import { DesktopQueue, MobileQueue } from '../features/queue/QueuePage';
 import { DeletePostDialog } from '../features/queue/postActions';
 import { useRoute } from '../lib/route';
-import { actions, appStore, useAppState } from '../lib/store';
+import { actions, appStore, syncFiltersWithUrl, useAppState } from '../lib/store';
 import { useIsDesktop } from '../lib/useMediaQuery';
 import { SettingsPage } from './SettingsPage';
 import { DesktopShell, MobileShell } from './Shell';
@@ -18,6 +18,8 @@ export function App() {
     // StrictMode runs effects twice in dev; the first call flips state to "loading".
     if (appStore.getState().load === 'idle') void actions.load();
   }, []);
+
+  useEffect(() => syncFiltersWithUrl(), []);
 
   // Client-side navigation: retitle the tab and move focus to the new page so
   // screen readers announce it (initial load keeps the browser's own focus).

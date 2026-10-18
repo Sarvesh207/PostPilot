@@ -36,12 +36,10 @@ export function PostCard({ post, retrying, layout }: PostCardProps) {
   const menu = (
     <OverflowMenu label={`Actions for the ${time} post`} actions={menuActions(post)} triggerId={menuTriggerId(post.id)} />
   );
-  const retry = post.error && (
+  const retry = post.errorMessage && (
     <Button
       size={layout === 'desktop' ? 'sm' : 'md'}
       icon={<RotateCw className="size-4" aria-hidden="true" />}
-      loading={retrying}
-      loadingText="Retrying…"
       aria-describedby={errorId}
       onClick={() => retryWithToast(post.id)}
       className={cn(layout === 'mobile' && 'w-full')}
@@ -58,18 +56,18 @@ export function PostCard({ post, retrying, layout }: PostCardProps) {
             <div className="flex items-center gap-2">
               <PlatformStack platforms={post.platforms} round />
               <span className="truncate text-[13px] text-text-muted">{platformLabel(post)}</span>
-              <StatusBadge status={post.status} className="ml-auto" />
+              <StatusBadge status={post.status} pending={retrying} className="ml-auto" />
               <span className="-my-1.5">{menu}</span>
             </div>
             <p className="mt-2.5 line-clamp-2 text-[15px] leading-relaxed">{post.content}</p>
           </div>
-          {post.imageUrl && <PostThumb url={post.imageUrl} className="size-20" />}
+          {post.mediaUrl && <PostThumb url={post.mediaUrl} className="size-20" />}
         </div>
-        {post.error && (
+        {post.errorMessage && (
           <div className="flex items-center gap-3 border-t border-failed-border bg-failed-soft py-2 pl-4 pr-3">
             <p id={errorId} className="flex min-w-0 items-center gap-2 text-[13px] font-medium text-failed">
               <CircleAlert className="size-4 shrink-0" aria-hidden="true" />
-              {post.error.message}
+              {post.errorMessage}
             </p>
             <span className="ml-auto">{retry}</span>
           </div>
@@ -81,7 +79,7 @@ export function PostCard({ post, retrying, layout }: PostCardProps) {
   return (
     <article className="rounded-2xl border border-border-subtle bg-surface p-4">
       <div className="flex gap-3">
-        {post.imageUrl && <PostThumb url={post.imageUrl} className="size-14" />}
+        {post.mediaUrl && <PostThumb url={post.mediaUrl} className="size-14" />}
         <div className="min-w-0 flex-1">
           <div className="flex items-start gap-1">
             <p className="line-clamp-2 flex-1 text-[15px] leading-relaxed">{post.content}</p>
@@ -92,15 +90,15 @@ export function PostCard({ post, retrying, layout }: PostCardProps) {
             <time dateTime={post.scheduledAt} className="text-[15px] font-semibold tabular-nums">
               {time} <span className="text-[13px] font-normal text-text-muted">{timeZoneAbbr(post.scheduledAt)}</span>
             </time>
-            <StatusBadge status={post.status} className="ml-auto" />
+            <StatusBadge status={post.status} pending={retrying} className="ml-auto" />
           </div>
         </div>
       </div>
-      {post.error && (
+      {post.errorMessage && (
         <div className="mt-3 flex flex-col gap-3 border-t border-border-subtle pt-3">
           <p id={errorId} className="flex items-center gap-2 text-sm font-medium text-failed">
             <TriangleAlert className="size-4 shrink-0" aria-hidden="true" />
-            {post.error.message}
+            {post.errorMessage}
           </p>
           {retry}
         </div>

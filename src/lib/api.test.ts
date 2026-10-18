@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { createMockApi, scenarioFromUrl, type MockApiOptions } from './api';
 import { zonedToIso } from './dates';
 import type { PostDraft } from './types';
@@ -12,7 +12,7 @@ function memoryStorage() {
 }
 
 function makeApi(opts: MockApiOptions = {}) {
-  return createMockApi({ storage: null, latency: [0, 0], now: () => NOW, ...opts });
+  return createMockApi({ storage: null, latency: [0, 0], retryDelay: 0, now: () => NOW, ...opts });
 }
 
 const draft = (patch: Partial<PostDraft> = {}): PostDraft => ({
@@ -30,7 +30,7 @@ async function findByContent(api: ReturnType<typeof makeApi>, start: string) {
 
 describe('listPosts', () => {
   it('starts with the demo posts', async () => {
-    expect(await makeApi().listPosts()).toHaveLength(9);
+    expect(await makeApi().listPosts()).toHaveLength(32);
   });
 
   it('returns copies, so callers cannot mutate the store', async () => {
@@ -51,10 +51,10 @@ describe('listPosts', () => {
 describe('createPost', () => {
   it('schedules a valid post', async () => {
     const api = makeApi();
-    const post = await api.createPost(draft({ imageUrl: '' }));
+    const post = await api.createPost(draft({ mediaUrl: '' }));
     expect(post).toMatchObject({ status: 'scheduled', platforms: ['instagram'] });
-    expect(post.imageUrl).toBeUndefined();
-    expect(await api.listPosts()).toHaveLength(10);
+    expect(post.mediaUrl).toBeUndefined();
+    expect(await api.listPosts()).toHaveLength(33);
   });
 
   it('rejects drafts the composer should have blocked', async () => {
@@ -73,54 +73,50 @@ describe('updatePost / deletePost', () => {
     const failed = await findByContent(api, 'Behind the scenes');
     const updated = await api.updatePost(failed.id, draft({ content: failed.content, platforms: ['instagram'] }));
     expect(updated.status).toBe('scheduled');
-    expect(updated.error).toBeUndefined();
+    expect(updated).toMatchObject({ errorMessage: undefined, failure: undefined });
   });
 
   it('deletes, then reports the post as missing', async () => {
     const api = makeApi();
     const [first] = await api.listPosts();
     await api.deletePost(first.id);
-    expect(await api.listPosts()).toHaveLength(8);
+    expect(await api.listPosts()).toHaveLength(31);
     await expect(api.deletePost(first.id)).rejects.toMatchObject({ code: 'not_found' });
   });
 });
 
 describe('retryPost', () => {
-  it('keeps failing an expired-token post until the account is reconnected', async () => {
-    const api = makeApi();
-    const post = await findByContent(api, 'Our Navratri');
-    await expect(api.retryPost(post.id)).rejects.toMatchObject({ code: 'retry_failed' });
+  afterEach(() => vi.useRealTimers());
 
-    await api.reconnectAccount('instagram');
-    const { post: retried, rescheduled } = await api.retryPost(post.id);
-    expect(retried.status).toBe('scheduled');
-    expect(retried.error).toBeUndefined();
+  it('fails 20% of the time', async () => {
+    const unlucky = makeApi({ random: () => 0.1 });
+    await expect(unlucky.retryPost((await findByContent(unlucky, 'Our Navratri')).id)).rejects.toMatchObject({
+      code: 'retry_failed',
+      message: 'Retry failed — please try again',
+    });
+
+    const lucky = makeApi({ random: () => 0.2 });
+    const { post: retried, rescheduled } = await lucky.retryPost((await findByContent(lucky, 'Our Navratri')).id);
+    expect(retried).toMatchObject({ status: 'scheduled', errorMessage: undefined, failure: undefined });
     expect(rescheduled).toBe(false); // 2:30 PM is still ahead of 9:00 AM.
   });
 
-  it('succeeds or fails a rate-limited post by chance', async () => {
-    const unlucky = makeApi({ random: () => 0.9 });
-    await expect(unlucky.retryPost((await findByContent(unlucky, 'New on the menu')).id)).rejects.toThrow(
-      'Retry failed — please try again',
-    );
-
-    const lucky = makeApi({ random: () => 0.1 });
-    const { post } = await lucky.retryPost((await findByContent(lucky, 'New on the menu')).id);
-    expect(post.status).toBe('scheduled');
-  });
-
-  it('cannot fix a missing TikTok video by retrying', async () => {
-    const api = makeApi({ random: () => 0 });
-    await expect(api.retryPost((await findByContent(api, 'Behind the scenes')).id)).rejects.toMatchObject({
-      code: 'retry_failed',
-    });
+  it('takes one second', async () => {
+    vi.useFakeTimers();
+    const api = makeApi({ retryDelay: undefined, random: () => 0.5 });
+    const post = await findByContent(api, 'Our Navratri');
+    let settled = false;
+    void api.retryPost(post.id).then(() => (settled = true));
+    await vi.advanceTimersByTimeAsync(999);
+    expect(settled).toBe(false);
+    await vi.advanceTimersByTimeAsync(1);
+    expect(settled).toBe(true);
   });
 
   it('moves a post whose time has passed to a few minutes from now', async () => {
     let now = NOW;
-    const api = makeApi({ now: () => now });
+    const api = makeApi({ now: () => now, random: () => 0.5 });
     const post = await findByContent(api, 'Our Navratri');
-    await api.reconnectAccount('instagram');
 
     now = new Date('2026-10-14T09:30:00Z'); // 3:00 PM IST, after the 2:30 PM slot.
     const { post: retried, rescheduled } = await api.retryPost(post.id);
@@ -135,6 +131,24 @@ describe('retryPost', () => {
   });
 });
 
+describe('reset', () => {
+  it('clears posts but keeps accounts', async () => {
+    const api = makeApi();
+    await api.reconnectAccount('instagram');
+    await api.reset('empty');
+    expect(await api.listPosts()).toEqual([]);
+    expect((await api.getAccounts()).instagram).toBe('connected');
+  });
+
+  it('restores the demo posts and accounts', async () => {
+    const api = makeApi();
+    await api.reconnectAccount('instagram');
+    await api.reset('seed');
+    expect(await api.listPosts()).toHaveLength(32);
+    expect((await api.getAccounts()).instagram).toBe('expired');
+  });
+});
+
 describe('persistence', () => {
   it('reloads saved posts from storage', async () => {
     const storage = memoryStorage();
@@ -142,13 +156,13 @@ describe('persistence', () => {
     await first.listPosts();
     await first.createPost(draft());
 
-    expect(await makeApi({ storage }).listPosts()).toHaveLength(10);
+    expect(await makeApi({ storage }).listPosts()).toHaveLength(33);
   });
 
   it('falls back to demo data when storage is corrupt', async () => {
     const storage = memoryStorage();
     storage.setItem('pp-data-v1', '{not json');
-    expect(await makeApi({ storage }).listPosts()).toHaveLength(9);
+    expect(await makeApi({ storage }).listPosts()).toHaveLength(32);
   });
 
   it('never writes demo scenarios to storage', async () => {

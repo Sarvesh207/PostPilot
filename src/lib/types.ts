@@ -2,25 +2,26 @@ import type { Platform } from './platforms';
 
 export type PostStatus = 'scheduled' | 'published' | 'failed';
 
-/** Why a post failed. Drives the retry rules in the mock API. */
+/** Why a post failed. Drives the advice in the failed-posts banner. */
 export type FailureCode = 'token_expired' | 'rate_limited' | 'media_required';
 
-export interface PostError {
+/** Machine-readable side of a failure, alongside the user-facing `errorMessage`. */
+export interface PostFailure {
   code: FailureCode;
   platform: Platform;
-  /** User-facing line shown on the card, e.g. "Instagram access token expired". */
-  message: string;
 }
 
 export interface Post {
   id: string;
   content: string;
   platforms: Platform[];
-  imageUrl?: string;
+  mediaUrl?: string;
   /** ISO 8601 instant (UTC). Displayed in the viewer's local time zone. */
   scheduledAt: string;
   status: PostStatus;
-  error?: PostError;
+  /** Set on failed posts, e.g. "Instagram access token expired". */
+  errorMessage?: string;
+  failure?: PostFailure;
   createdAt: string;
   updatedAt: string;
 }
@@ -29,7 +30,7 @@ export interface Post {
 export interface PostDraft {
   content: string;
   platforms: Platform[];
-  imageUrl?: string;
+  mediaUrl?: string;
   scheduledAt: string;
 }
 

@@ -1,6 +1,6 @@
 // Pure derivations over posts + filters. No React here, so it's all unit-testable.
 
-import { dayKey, dayLabel, weekKeys, localTimeZone } from './dates';
+import { addDaysToKey, dayKey, dayLabel, weekKeys, localTimeZone } from './dates';
 import { PLATFORM_BY_ID } from './platforms';
 import type { Filters, Post, PostStatus } from './types';
 
@@ -16,7 +16,7 @@ export function filterPosts(posts: Post[], filters: Filters): Post[] {
     // Platform filter is "any of": a post matches if it targets at least one selected platform.
     if (filters.platforms.length && !p.platforms.some((pl) => filters.platforms.includes(pl))) return false;
     if (q) {
-      const haystack = [p.content, p.error?.message ?? '', ...p.platforms.map((pl) => PLATFORM_BY_ID[pl].name)]
+      const haystack = [p.content, p.errorMessage ?? '', ...p.platforms.map((pl) => PLATFORM_BY_ID[pl].name)]
         .join(' ')
         .toLocaleLowerCase();
       if (!haystack.includes(q)) return false;
@@ -79,15 +79,18 @@ export interface WeekDay {
   isPast: boolean;
 }
 
-/** Mon–Sun strip for the queue header, with post counts per day. */
-export function weekSummary(posts: Post[], now: Date = new Date(), tz = localTimeZone()): WeekDay[] {
+/**
+ * Mon–Sun strip for the queue header, with post counts per day. `offset`
+ * picks a week relative to this one (-1 = last week, 1 = next week).
+ */
+export function weekSummary(posts: Post[], now: Date = new Date(), tz = localTimeZone(), offset = 0): WeekDay[] {
   const today = dayKey(now, tz);
   const counts = new Map<string, number>();
   for (const p of posts) {
     const k = dayKey(p.scheduledAt, tz);
     counts.set(k, (counts.get(k) ?? 0) + 1);
   }
-  return weekKeys(now, tz).map((key) => ({
+  return weekKeys(now, tz).map((k) => addDaysToKey(k, offset * 7)).map((key) => ({
     key,
     count: counts.get(key) ?? 0,
     isToday: key === today,

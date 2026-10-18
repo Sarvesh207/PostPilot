@@ -10,9 +10,9 @@ export function failureAdvice(failed: Post[], accounts: Accounts | null): string
   let rateLimited = false;
   let needsMedia = false;
   for (const p of failed) {
-    if (p.error?.code === 'token_expired' && accounts?.[p.error.platform] === 'expired') reconnect.add(p.error.platform);
-    if (p.error?.code === 'rate_limited') rateLimited = true;
-    if (p.error?.code === 'media_required') needsMedia = true;
+    if (p.failure?.code === 'token_expired' && accounts?.[p.failure.platform] === 'expired') reconnect.add(p.failure.platform);
+    if (p.failure?.code === 'rate_limited') rateLimited = true;
+    if (p.failure?.code === 'media_required') needsMedia = true;
   }
   const parts: string[] = [];
   if (reconnect.size) parts.push(`Reconnect ${[...reconnect].map((p) => PLATFORM_BY_ID[p].name).join(' and ')}, then retry.`);
