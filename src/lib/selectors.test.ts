@@ -134,6 +134,6 @@ describe('weekSummary', () => {
     expect(last.every((d) => d.isPast && !d.isToday)).toBe(true);
     expect([next[0].key, next[6].key]).toEqual(['2026-10-19', '2026-10-25']);
     expect(next.some((d) => d.isPast)).toBe(false);
-    expect(next.reduce((n, d) => n + d.count, 0)).toBe(17);
+    expect(next.reduce((n, d) => n + d.count, 0)).toBe(13);
   });
 });

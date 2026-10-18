@@ -9,7 +9,7 @@
         "instagram",
         "x"
       ],
-      "mediaUrl": "https://cdn.yourbrand.in/campaigns/diwali-sale-hero.jpg",
+      "mediaUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/59/Diwali_Diyas.jpg/500px-Diwali_Diyas.jpg",
       "scheduledAt": "2026-10-14T04:30:00.000Z",
       "status": "published"
     },
@@ -34,7 +34,7 @@
         "tiktok",
         "instagram"
       ],
-      "mediaUrl": "https://cdn.yourbrand.in/campaigns/autumn-bts.jpg",
+      "mediaUrl": "https://upload.wikimedia.org/wikipedia/commons/b/b8/Fr2img.jpg",
       "scheduledAt": "2026-10-14T12:30:00.000Z",
       "status": "failed",
       "errorMessage": "TikTok video upload required",
@@ -50,7 +50,7 @@
         "facebook",
         "instagram"
       ],
-      "mediaUrl": "https://cdn.yourbrand.in/campaigns/gift-hampers.jpg",
+      "mediaUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/54/A_box_full_of_burfis%2C_Mithai_Indian_Sweets_London_November_2009.jpg/500px-A_box_full_of_burfis%2C_Mithai_Indian_Sweets_London_November_2009.jpg",
       "scheduledAt": "2026-10-14T14:30:00.000Z",
       "status": "scheduled"
     },
@@ -87,7 +87,7 @@
         "instagram",
         "tiktok"
       ],
-      "mediaUrl": "https://cdn.yourbrand.in/campaigns/latte-workshop.jpg",
+      "mediaUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/06/Latte_art.jpg/500px-Latte_art.jpg",
       "scheduledAt": "2026-10-16T05:30:00.000Z",
       "status": "scheduled"
     },
@@ -110,7 +110,7 @@
         "x",
         "tiktok"
       ],
-      "mediaUrl": "https://cdn.yourbrand.in/campaigns/diwali-last-call.jpg",
+      "mediaUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a9/Saree_on_display_at_Dilli_Haat.JPG/500px-Saree_on_display_at_Dilli_Haat.JPG",
       "scheduledAt": "2026-10-17T03:30:00.000Z",
       "status": "scheduled"
     },
@@ -121,7 +121,7 @@
         "facebook",
         "instagram"
       ],
-      "mediaUrl": "https://cdn.yourbrand.in/campaigns/brunch-menu.jpg",
+      "mediaUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/01/Fab_brunch_pancakes_%2827122383714%29.jpg/500px-Fab_brunch_pancakes_%2827122383714%29.jpg",
       "scheduledAt": "2026-10-18T04:30:00.000Z",
       "status": "scheduled"
     },
@@ -131,8 +131,8 @@
       "platforms": [
         "x"
       ],
-      "scheduledAt": "2026-10-18T12:00:00.000Z",
-      "status": "scheduled"
+      "scheduledAt": "2026-10-13T12:00:00.000Z",
+      "status": "published"
     },
     {
       "id": "post-12",
@@ -141,7 +141,7 @@
         "instagram",
         "tiktok"
       ],
-      "mediaUrl": "https://cdn.yourbrand.in/campaigns/festive-grwm.jpg",
+      "mediaUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/0f/Close-up_of_a_red_velvet_lehenga_with_intricate_gold_embroidery%2C_featuring_a_choli_and_a_flowing_skirt.jpg/500px-Close-up_of_a_red_velvet_lehenga_with_intricate_gold_embroidery%2C_featuring_a_choli_and_a_flowing_skirt.jpg",
       "scheduledAt": "2026-10-19T04:00:00.000Z",
       "status": "scheduled"
     },
@@ -165,7 +165,7 @@
       "platforms": [
         "tiktok"
       ],
-      "mediaUrl": "https://cdn.yourbrand.in/campaigns/diya-painting.jpg",
+      "mediaUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/51/Saniya_and_Shikha_Kaushal_help_people_paint_diya_lights_%286278083584%29.jpg/500px-Saniya_and_Shikha_Kaushal_help_people_paint_diya_lights_%286278083584%29.jpg",
       "scheduledAt": "2026-10-19T13:30:00.000Z",
       "status": "scheduled"
     },
@@ -175,8 +175,8 @@
       "platforms": [
         "facebook"
       ],
-      "scheduledAt": "2026-10-20T02:30:00.000Z",
-      "status": "scheduled"
+      "scheduledAt": "2026-10-12T04:30:00.000Z",
+      "status": "published"
     },
     {
       "id": "post-16",
@@ -184,7 +184,7 @@
       "platforms": [
         "instagram"
       ],
-      "mediaUrl": "https://cdn.yourbrand.in/campaigns/customer-spotlight.jpg",
+      "mediaUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/15/Zari_work_and_mirror_work_in_Hyderabad.jpg/500px-Zari_work_and_mirror_work_in_Hyderabad.jpg",
       "scheduledAt": "2026-10-20T06:30:00.000Z",
       "status": "failed",
       "errorMessage": "Instagram access token expired",
@@ -212,7 +212,7 @@
         "x",
         "tiktok"
       ],
-      "mediaUrl": "https://cdn.yourbrand.in/campaigns/gift-cards.jpg",
+      "mediaUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/8f/Brown_gift_box_with_red_ribbon_and_bow.jpg/500px-Brown_gift_box_with_red_ribbon_and_bow.jpg",
       "scheduledAt": "2026-10-21T05:30:00.000Z",
       "status": "scheduled"
     },
@@ -222,8 +222,8 @@
       "platforms": [
         "x"
       ],
-      "scheduledAt": "2026-10-21T10:30:00.000Z",
-      "status": "scheduled"
+      "scheduledAt": "2026-10-13T05:30:00.000Z",
+      "status": "published"
     },
     {
       "id": "post-20",
@@ -231,7 +231,7 @@
       "platforms": [
         "instagram"
       ],
-      "mediaUrl": "https://cdn.yourbrand.in/campaigns/rangoli-ideas.jpg",
+      "mediaUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/86/A_Beautiful_Rangoli.jpg/500px-A_Beautiful_Rangoli.jpg",
       "scheduledAt": "2026-10-22T05:00:00.000Z",
       "status": "scheduled"
     },
@@ -252,7 +252,7 @@
         "facebook",
         "instagram"
       ],
-      "mediaUrl": "https://cdn.yourbrand.in/campaigns/dhanteras-coin.jpg",
+      "mediaUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a2/10_Rupees_Silver_coin_of_India_1972_%2825_years_of_India%27s_independence%29.jpg/500px-10_Rupees_Silver_coin_of_India_1972_%2825_years_of_India%27s_independence%29.jpg",
       "scheduledAt": "2026-10-23T03:30:00.000Z",
       "status": "scheduled"
     },
@@ -263,8 +263,8 @@
         "x",
         "tiktok"
       ],
-      "scheduledAt": "2026-10-23T08:30:00.000Z",
-      "status": "scheduled"
+      "scheduledAt": "2026-10-11T08:30:00.000Z",
+      "status": "published"
     },
     {
       "id": "post-24",
@@ -272,8 +272,8 @@
       "platforms": [
         "instagram"
       ],
-      "scheduledAt": "2026-10-23T15:30:00.000Z",
-      "status": "scheduled"
+      "scheduledAt": "2026-10-12T13:30:00.000Z",
+      "status": "published"
     },
     {
       "id": "post-25",
@@ -283,7 +283,7 @@
         "instagram",
         "x"
       ],
-      "mediaUrl": "https://cdn.yourbrand.in/campaigns/diwali-greeting.jpg",
+      "mediaUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/60/Sparklers_at_Diwali_2010.jpg/500px-Sparklers_at_Diwali_2010.jpg",
       "scheduledAt": "2026-10-24T03:00:00.000Z",
       "status": "scheduled"
     },
@@ -313,7 +313,7 @@
         "instagram",
         "tiktok"
       ],
-      "mediaUrl": "https://cdn.yourbrand.in/campaigns/restyle-tips.jpg",
+      "mediaUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f8/Bandhani_Dupatta_%285788125979%29.jpg/500px-Bandhani_Dupatta_%285788125979%29.jpg",
       "scheduledAt": "2026-10-25T13:30:00.000Z",
       "status": "scheduled"
     },
@@ -333,7 +333,7 @@
         "facebook",
         "instagram"
       ],
-      "mediaUrl": "https://cdn.yourbrand.in/campaigns/winter-peek.jpg",
+      "mediaUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/27/Embroidered-pashmina-shawl.jpg/500px-Embroidered-pashmina-shawl.jpg",
       "scheduledAt": "2026-10-26T10:00:00.000Z",
       "status": "scheduled"
     },

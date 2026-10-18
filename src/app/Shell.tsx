@@ -1,4 +1,4 @@
-import { CalendarDays, List, Plus, Send, SlidersHorizontal } from 'lucide-react';
+import { List, Plus, Send, SlidersHorizontal } from 'lucide-react';
 import type { ReactNode } from 'react';
 import { ThemeSwitcher } from '../components/ThemeSwitcher';
 import { openComposer } from '../features/queue/postActions';
@@ -23,14 +23,13 @@ export function Logo({ className, ink = false }: { className?: string; ink?: boo
 }
 
 interface NavItem {
-  route: Route | null;
+  route: Route;
   label: string;
   icon: ReactNode;
 }
 
 const NAV: NavItem[] = [
   { route: 'queue', label: 'Queue', icon: <List /> },
-  { route: null, label: 'Calendar', icon: <CalendarDays /> },
   { route: 'settings', label: 'Settings', icon: <SlidersHorizontal /> },
 ];
 
@@ -50,45 +49,31 @@ export function DesktopShell({
       <aside className="fixed inset-y-0 left-0 flex w-60 flex-col border-r border-border-subtle bg-surface px-3 pb-3 pt-4">
         <div className="flex items-center gap-2.5 px-2">
           <Logo ink />
-          <div className="leading-tight">
-            <p className="text-[15px] font-semibold">PostPilot</p>
-            <p className="text-xs text-text-muted">[Your brand]</p>
-          </div>
+          <p className="text-[15px] font-semibold">PostPilot</p>
         </div>
 
         <nav aria-label="Main" className="mt-6">
           <ul className="flex flex-col gap-0.5">
             {NAV.map((item) => (
               <li key={item.label}>
-                {item.route ? (
-                  <a
-                    {...linkProps(item.route)}
-                    aria-current={route === item.route ? 'page' : undefined}
-                    className={cn(
-                      'focus-ring flex h-10 items-center gap-3 rounded-lg border px-3 text-sm [&_svg]:size-4',
-                      route === item.route
-                        ? 'border-border-subtle bg-surface font-medium text-text shadow-[0_1px_2px_rgb(15_23_42/0.06)] dark:bg-surface-raised'
-                        : 'border-transparent text-text-muted hover:bg-surface-hover hover:text-text',
-                    )}
-                  >
-                    {item.icon}
-                    <span className="mr-auto">{item.label}</span>
-                    {item.route === 'queue' && queueCount !== null && (
-                      <span className="text-xs tabular-nums text-text-muted" aria-label={`${queueCount} posts`}>
-                        {queueCount}
-                      </span>
-                    )}
-                  </a>
-                ) : (
-                  <span
-                    aria-disabled="true"
-                    className="flex h-10 cursor-not-allowed items-center gap-3 rounded-lg px-3 text-sm text-disabled-text [&_svg]:size-4"
-                  >
-                    {item.icon}
-                    <span className="mr-auto">{item.label}</span>
-                    <span className="rounded-full bg-surface-sunken px-2 py-0.5 text-[11px] font-medium text-text-muted">Soon</span>
-                  </span>
-                )}
+                <a
+                  {...linkProps(item.route)}
+                  aria-current={route === item.route ? 'page' : undefined}
+                  className={cn(
+                    'focus-ring flex h-10 items-center gap-3 rounded-lg border px-3 text-sm [&_svg]:size-4',
+                    route === item.route
+                      ? 'border-border-subtle bg-surface font-medium text-text shadow-[0_1px_2px_rgb(15_23_42/0.06)] dark:bg-surface-raised'
+                      : 'border-transparent text-text-muted hover:bg-surface-hover hover:text-text',
+                  )}
+                >
+                  {item.icon}
+                  <span className="mr-auto">{item.label}</span>
+                  {item.route === 'queue' && queueCount !== null && (
+                    <span className="text-xs tabular-nums text-text-muted" aria-label={`${queueCount} posts`}>
+                      {queueCount}
+                    </span>
+                  )}
+                </a>
               </li>
             ))}
           </ul>
@@ -130,30 +115,20 @@ export function MobileShell({ route, children, showFab }: { route: Route; childr
         aria-label="Main"
         className="fixed inset-x-0 bottom-0 z-20 border-t border-border-subtle bg-surface pb-[env(safe-area-inset-bottom)]"
       >
-        <ul className="grid h-16 grid-cols-3">
+        <ul className="grid h-16 grid-cols-2">
           {NAV.map((item) => (
             <li key={item.label} className="flex">
-              {item.route ? (
-                <a
-                  {...linkProps(item.route)}
-                  aria-current={route === item.route ? 'page' : undefined}
-                  className={cn(
-                    'focus-ring flex flex-1 flex-col items-center justify-center gap-1 text-xs font-medium [&_svg]:size-5',
-                    route === item.route ? 'text-accent-text' : 'text-text-muted',
-                  )}
-                >
-                  {item.icon}
-                  {item.label}
-                </a>
-              ) : (
-                <span
-                  aria-disabled="true"
-                  className="flex flex-1 flex-col items-center justify-center gap-1 text-xs text-disabled-text [&_svg]:size-5"
-                >
-                  {item.icon}
-                  {item.label} · Soon
-                </span>
-              )}
+              <a
+                {...linkProps(item.route)}
+                aria-current={route === item.route ? 'page' : undefined}
+                className={cn(
+                  'focus-ring flex flex-1 flex-col items-center justify-center gap-1 text-xs font-medium [&_svg]:size-5',
+                  route === item.route ? 'text-accent-text' : 'text-text-muted',
+                )}
+              >
+                {item.icon}
+                {item.label}
+              </a>
             </li>
           ))}
         </ul>

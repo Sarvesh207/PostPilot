@@ -22,7 +22,7 @@ function toneFor(url: string) {
 
 /**
  * Square post thumbnail. Shows the image when it loads, otherwise a tinted
- * placeholder (the demo URLs point at a CDN that doesn't exist).
+ * placeholder (e.g. for a broken link or while offline).
  */
 export function PostThumb({ url, className }: { url: string; className?: string }) {
   const [failed, setFailed] = useState(() => broken.has(url));

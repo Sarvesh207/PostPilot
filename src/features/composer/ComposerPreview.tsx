@@ -32,10 +32,10 @@ export function ComposerPreview({
             className="grid size-10 shrink-0 place-items-center rounded-full bg-accent-soft text-sm font-semibold text-accent-text"
             aria-hidden="true"
           >
-            YB
+            PP
           </span>
           <div className="min-w-0 leading-tight">
-            <p className="truncate text-[15px] font-semibold">[Your brand]</p>
+            <p className="truncate text-[15px] font-semibold">PostPilot</p>
             <p className={cn('mt-0.5 truncate text-[13px]', check.scheduledAt ? 'text-text-muted' : 'italic text-text-muted')}>
               {when}
             </p>

@@ -63,8 +63,10 @@ The demo scenarios keep their data in memory, so they never overwrite your saved
 - **Retry outcome is the brief's 20% coin flip, whatever the original failure was.** Failed posts also carry a `failure` code (`token_expired`, `rate_limited`, `media_required`). It's only used to give advice in the failed-posts banner, such as "Reconnect Instagram, then retry".
 - **A retried post whose time has passed** is moved to 5 minutes from now, and the toast tells you the new time.
 - **Editing a failed post** puts it back in the queue as scheduled.
+- **One shared text for all selected platforms.** Each platform gets its own live counter, so the strictest selected platform sets the real limit (with X selected, the post must fit in 280). To fix an over-limit post, shorten it or deselect that platform. Separate text per platform is a possible next step.
 - **Character counting** counts what users see as characters (so emoji count as one) and doesn't model X's rule that links count as 23 characters.
 - **The image URL** must be an http(s) URL. A preview is shown when the image loads, and a neutral placeholder when it doesn't.
+- **Demo images** are hotlinked from Wikimedia Commons; each belongs to its author under the licence shown on its Commons page.
 - **The platform filter matches any of the selected platforms**, and search also matches platform names and error messages.
 - **The date-time picker** is the browser's native date and time inputs, which work well on mobile.
 - **Accounts** (connected or expired) are mocked so the reconnect flow can be shown; there is no login.
