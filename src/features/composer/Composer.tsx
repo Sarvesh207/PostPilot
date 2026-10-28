@@ -247,6 +247,9 @@ function ComposerFields({ form, check, update, touched, setTouched, submitting, 
   const scheduleErrorId = `${id}-schedule`;
   const scheduleHintId = `${id}-tz`;
   const imageRef = useRef<HTMLInputElement>(null);
+  const pdfRef = useRef<HTMLInputElement>(null);
+  console.log("PDFFILE", pdfRef.current?.files)
+
 
   const limitError = overLimitMessage(check.overLimit);
   const platformError = touched.platforms && form.platforms.length === 0;
@@ -266,6 +269,13 @@ function ComposerFields({ form, check, update, touched, setTouched, submitting, 
   };
 
   const scheduleDescribedBy = [check.pastSchedule && scheduleErrorId, scheduleHintId].filter(Boolean).join(' ');
+
+  function clearPdf() {
+    update({ pdfFile: null })
+    if (pdfRef.current) {
+      pdfRef.current.value = ''
+    }
+  }
 
   return (
     // A disabled fieldset locks every control while the post is being saved.
@@ -345,6 +355,38 @@ function ComposerFields({ form, check, update, touched, setTouched, submitting, 
             </button>
           </div>
         )}
+      </div>
+
+      <div className="flex flex-col gap-3">
+        <Field
+          label="PDF File"
+          labelSuffix="(optional)"
+
+        >
+          <Input
+            ref={pdfRef}
+            type="file"
+            placeholder="Attatch PDF"
+            leadingIcon={<Link2 />}
+            accept='application/pdf'
+            onChange={(e) => update({ pdfFile: e.target.files?.[0] ?? null })}
+          />
+
+          {
+            form.pdfFile && (
+              <button
+                type="button"
+                aria-label="Remove PDF"
+                onClick={clearPdf}
+                className=" focus-ring grid size-11 shrink-0 place-items-center rounded-lg text-text-muted hover:bg-surface-hover hover:text-text sm:size-9"
+              >
+                Remove PDF
+              </button>
+
+            )
+          }
+        </Field>
+
       </div>
 
       <div className="flex flex-col gap-2">

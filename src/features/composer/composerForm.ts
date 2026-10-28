@@ -10,17 +10,18 @@ export interface ComposerForm {
   content: string;
   platforms: Platform[];
   mediaUrl: string;
+  pdfFile:File | null
   /** "YYYY-MM-DD", as a native date input reports it. */
   date: string;
   /** "HH:mm", as a native time input reports it. */
   time: string;
 }
 
-export const EMPTY_FORM: ComposerForm = { content: '', platforms: [], mediaUrl: '', date: '', time: '' };
+export const EMPTY_FORM: ComposerForm = { content: '', platforms: [], mediaUrl: '' , pdfFile:null ,date: '', time: '' };
 
 export function formFromPost(post: Post, tz = localTimeZone()): ComposerForm {
   const { date, time } = isoToZoned(post.scheduledAt, tz);
-  return { content: post.content, platforms: [...post.platforms], mediaUrl: post.mediaUrl ?? '', date, time };
+  return { content: post.content, platforms: [...post.platforms], mediaUrl: post.mediaUrl ?? '', pdfFile: null, date, time };
 }
 
 export interface OverLimit {

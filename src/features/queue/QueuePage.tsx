@@ -202,7 +202,7 @@ export function MobileQueue() {
       </header>
 
       <main id="main-content" tabIndex={-1} className="mx-auto max-w-2xl px-4 pt-4 outline-none">
-        <h1 className="sr-only">Your queue</h1>
+        <h1 className="sr-only">Your queue </h1>
         <QueueBody
           desktop={false}
           view={view}

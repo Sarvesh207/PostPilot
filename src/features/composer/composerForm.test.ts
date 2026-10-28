@@ -9,6 +9,7 @@ const valid: ComposerForm = {
   content: 'Diwali Mega Sale is LIVE 🪔 Flat 40% off',
   platforms: ['x', 'facebook', 'instagram'],
   mediaUrl: '',
+  pdfFile:null,
   date: '2026-10-16',
   time: '10:00',
 };

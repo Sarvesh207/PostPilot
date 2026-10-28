@@ -1,8 +1,15 @@
+import { useState } from 'react';
 import { PlatformStack } from '../../components/ui/PlatformGlyph';
 import { cn } from '../../lib/cn';
 import { relativeDateTime, timeZoneAbbr } from '../../lib/dates';
 import { PostThumb } from '../queue/PostThumb';
 import type { ComposerForm, FormCheck } from './composerForm';
+import { Document, Page, pdfjs } from 'react-pdf';
+
+pdfjs.GlobalWorkerOptions.workerSrc = new URL(
+  'pdfjs-dist/build/pdf.worker.min.mjs',
+  import.meta.url,
+).toString();
 
 /** Desktop-only live preview of the post, beside the composer card. */
 export function ComposerPreview({
@@ -16,10 +23,15 @@ export function ComposerPreview({
   now: Date;
   className?: string;
 }) {
+
+  const [pdfPage, setPdfPage] = useState(0);
   const mediaUrl = form.mediaUrl.trim();
   const when = check.scheduledAt
     ? `${relativeDateTime(check.scheduledAt, now)} ${timeZoneAbbr(check.scheduledAt)}`
     : 'Pick a date and time';
+
+  const pdfFIle = form.pdfFile;
+  console.log("pdfFile", pdfFIle, form);
 
   return (
     <section aria-labelledby="composer-preview-heading" className={className}>
@@ -53,6 +65,27 @@ export function ComposerPreview({
 
         {mediaUrl && !check.badMediaUrl && (
           <PostThumb url={mediaUrl} className="aspect-[16/10] w-full rounded-none [&_svg]:size-9" />
+        )}
+
+        {form.pdfFile && (
+
+
+          <Document className="max-h-[480px] overflow-y-auto border-t border-border-subtle bg-surface-sunken" file={form.pdfFile} onLoadSuccess={({ numPages }) => setPdfPage(numPages)}>
+
+
+
+            {Array.from({ length: pdfPage }, (_, i) => (
+              <Page
+                key={i + 1}
+                pageNumber={i + 1}
+                width={338}
+                renderTextLayer={false}
+                renderAnnotationLayer={false}
+                className="mb-2 last:mb-0"
+              />
+            ))}
+
+          </Document>
         )}
 
         <div className="flex min-h-12 items-center gap-2 px-4 py-3 text-[13px] text-text-muted">
